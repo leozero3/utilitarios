@@ -2,23 +2,23 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class ImcMeter extends StatelessWidget {
-  final double imc;
+  final ImcMeterData imcMeterData;
 
-  const ImcMeter({super.key, required this.imc});
+  const ImcMeter({super.key, required this.imcMeterData});
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       size: const Size(200, 200), // Tamanho do velocímetro
-      painter: _ImcMeterPainter(imc: imc),
+      painter: _ImcMeterPainter(imcMeterData: imcMeterData),
     );
   }
 }
 
 class _ImcMeterPainter extends CustomPainter {
-  final double imc;
+  final ImcMeterData imcMeterData;
 
-  _ImcMeterPainter({required this.imc});
+  _ImcMeterPainter({required this.imcMeterData});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -40,24 +40,14 @@ class _ImcMeterPainter extends CustomPainter {
     );
 
     // Definir as seções para que todas tenham o mesmo tamanho visual
-    const sectionCount = 8; // Número total de seções
-    const sectionAngle = pi / sectionCount; // Ângulo de cada seção
-
-    final categoryColors = [
-      Colors.blue,
-      Colors.blue[600]!,
-      Colors.blue[800]!,
-      Colors.green,
-      Colors.yellow,
-      Colors.orange,
-      Colors.red,
-      Colors.red[900]!,
-    ];
+    // Número total de seções
+    final sectionCount = imcMeterData.sectionColors.length;
+    final sectionAngle = pi / sectionCount; // Ângulo de cada seção
 
     double startAngle = pi; // Inicia o arco a partir de 180°
 
     for (int i = 0; i < sectionCount; i++) {
-      paint.color = categoryColors[i];
+      paint.color = imcMeterData.sectionColors[i];
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
         startAngle,
@@ -68,32 +58,6 @@ class _ImcMeterPainter extends CustomPainter {
       startAngle += sectionAngle;
     }
 
-    // Mapear o IMC para a posição no arco visual
-    final imcRanges = [
-      [0, 15.99], // Magreza grave
-      [16, 16.99], // Magreza moderada
-      [17, 18.49], // Magreza leve
-      [18.5, 24.99], // Peso ideal
-      [25, 29.99], // Sobrepeso
-      [30, 34.99], // Obesidade grau I
-      [35, 39.99], // Obesidade grau
-      [40, 56], // Obesidade grau III
-    ];
-
-    // Encontrar o ângulo correspondente ao IMC
-    double normalizedImc = 0;
-    for (int i = 0; i < imcRanges.length; i++) {
-      if (imc >= imcRanges[i][0] && imc < imcRanges[i][1]) {
-        normalizedImc =
-            (imc - imcRanges[i][0]) / (imcRanges[i][1] - imcRanges[i][0]);
-        normalizedImc = (i + normalizedImc) / sectionCount;
-        break;
-      }
-    }
-
-    // Calcular o ângulo do ponteiro com base no IMC normalizado
-    final pointerAngle = pi + normalizedImc * pi;
-
     final pointerLength = radius * 1; // Ajustar o comprimento do ponteiro
 
     // Desenhar o ponteiro do IMC
@@ -102,8 +66,8 @@ class _ImcMeterPainter extends CustomPainter {
     canvas.drawLine(
       center,
       Offset(
-        center.dx + pointerLength * cos(pointerAngle),
-        center.dy + pointerLength * sin(pointerAngle),
+        center.dx + pointerLength * cos(imcMeterData.pointerAngle),
+        center.dy + pointerLength * sin(imcMeterData.pointerAngle),
       ),
       paint,
     );
@@ -113,4 +77,11 @@ class _ImcMeterPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true; // Redesenhar sempre que o IMC mudar
   }
+}
+
+class ImcMeterData {
+  final double pointerAngle;
+  final List<Color> sectionColors;
+
+  ImcMeterData({required this.pointerAngle, required this.sectionColors});
 }

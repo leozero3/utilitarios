@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+part of 'imc_bloc.dart';
 
 abstract class ImcEvent extends Equatable {
   const ImcEvent();

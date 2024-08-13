@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:utilitarios/modules/imc/bloc/imc_bloc.dart';
-import 'package:utilitarios/modules/imc/bloc/imc_event.dart';
-import 'package:utilitarios/modules/imc/bloc/imc_state.dart';
 import 'package:utilitarios/modules/imc/widgets/imc_meter.dart';
 
 class ImcForm extends StatefulWidget {
@@ -68,8 +66,14 @@ class _ImcFormState extends State<ImcForm> {
           const SizedBox(height: 50),
           BlocBuilder<ImcBloc, ImcState>(
             builder: (context, state) {
-              if (state.imc != null) {
-                return ImcMeter(imc: state.imc!);
+              if (state is Calculado) {
+                if (state.imc != null) {
+                  return ImcMeter(
+                    imcMeterData: state.imcMeterData!,
+                  );
+                } else {
+                  return const SizedBox(); // Espaço vazio caso o IMC ainda não tenha sido calculado
+                }
               } else {
                 return const SizedBox(); // Espaço vazio caso o IMC ainda não tenha sido calculado
               }

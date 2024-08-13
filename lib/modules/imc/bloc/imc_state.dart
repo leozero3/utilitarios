@@ -1,23 +1,33 @@
-import 'package:equatable/equatable.dart';
+part of 'imc_bloc.dart';
 
-class ImcState extends Equatable {
-  final double? imc;
-  final String? categoria;
+abstract class ImcState extends Equatable {
+  const ImcState();
+  // final double? imc;
+  // final String? categoria;
+  // final ImcMeterData? imcMeterData;
 
-  const ImcState({this.imc, this.categoria});
-
-  factory ImcState.initial() {
-    return const ImcState();
-  }
-
-  //
-  ImcState copyWith({double? imc, String? categoria}) {
-    return ImcState(
-      imc: imc ?? this.imc,
-      categoria: categoria ?? this.categoria,
-    );
-  }
+  // const ImcState({
+  //   this.imc,
+  //   this.categoria,
+  //   this.imcMeterData,
+  // });
 
   @override
-  List<Object?> get props => [imc, categoria];
+  List<Object?> get props => [];
+}
+
+class Initial extends ImcState {}
+
+class Calculado extends ImcState {
+  final double? imc;
+  String? categoria;
+  ImcMeterData? imcMeterData;
+  Calculado({
+    this.imc,
+    this.categoria,
+    this.imcMeterData,
+  });
+
+  @override
+  List<Object?> get props => [imc, categoria, imcMeterData];
 }
