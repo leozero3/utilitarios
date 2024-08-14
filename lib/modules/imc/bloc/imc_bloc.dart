@@ -11,25 +11,42 @@ part 'imc_event.dart';
 part 'imc_state.dart';
 
 class ImcBloc extends Bloc<ImcEvent, ImcState> {
-  ImcBloc() : super(Initial()) {
-    on<CalculateImc>(
-      (event, emit) {
-        //
-        print(event);
-        print(emit);
+  ImcBloc() : super(Calculado(peso: 70, altura: 1.75)) {
+    // Valores padrão
+    on<CalculateImc>((event, emit) {
+      final imcModel = ImcModel(peso: event.peso, altura: event.altura);
+      final imc = imcModel.calcularImc();
+      final imcMeterData = _calculateImcMeterData(imc);
+      emit(Calculado(
+        peso: event.peso,
+        altura: event.altura,
+        imc: imc,
+        categoria: imcModel.categoriaImc(),
+        imcMeterData: imcMeterData,
+      ));
+    });
 
-        final imcModel = ImcModel(peso: event.peso, altura: event.altura);
-        final imc = imcModel.calcularImc();
-        final imcMeterData = _calculateImcMeterData(imc);
-        emit(Calculado(
-          imc: imcModel
-              .calcularImc(), // Calcula o IMC com base no peso e altura.
-          categoria: imcModel.categoriaImc(),
-          imcMeterData: imcMeterData,
-        ));
-//
-      },
-    );
+    on<UpdatePeso>((event, emit) {
+      final calculadoState = state as Calculado;
+      emit(Calculado(
+        peso: event.peso,
+        altura: calculadoState.altura,
+        // imc: calculadoState.imc,
+        // categoria: calculadoState.categoria,
+        // imcMeterData: calculadoState.imcMeterData,
+      ));
+    });
+
+    on<UpdateAltura>((event, emit) {
+      final calculadoState = state as Calculado;
+      emit(Calculado(
+        peso: calculadoState.peso,
+        altura: event.altura,
+        // imc: calculadoState.imc,
+        // categoria: calculadoState.categoria,
+        // imcMeterData: calculadoState.imcMeterData,
+      ));
+    });
   }
 
   ImcMeterData _calculateImcMeterData(double imc) {

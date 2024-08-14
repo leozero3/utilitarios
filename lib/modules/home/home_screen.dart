@@ -7,8 +7,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, String>> utilities = [
-      {'title': 'Calculadora', 'route': '/calculadora'},
+      {'title': 'Tempo', 'route': '/tempo'},
       {'title': 'Calculadora de IMC', 'route': '/calculadora-imc'},
+      {'title': 'Calculadora', 'route': '/calculadora'},
       {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
       {'title': 'Despertador', 'route': '/despertador'},
       {

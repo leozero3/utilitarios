@@ -16,3 +16,21 @@ class CalculateImc extends ImcEvent {
   @override
   List<Object> get props => [peso, altura];
 }
+
+class UpdatePeso extends ImcEvent {
+  final double peso;
+
+  UpdatePeso({required this.peso});
+
+  @override
+  List<Object> get props => [peso];
+}
+
+class UpdateAltura extends ImcEvent {
+  final double altura;
+
+  UpdateAltura({required this.altura});
+
+  @override
+  List<Object> get props => [altura];
+}
