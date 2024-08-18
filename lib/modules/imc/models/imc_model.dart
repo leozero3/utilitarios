@@ -1,8 +1,12 @@
 class ImcModel {
+  final int? id;
   final double peso;
   final double altura;
+  DateTime? date;
+  double? imc;
 
-  ImcModel({required this.peso, required this.altura});
+  ImcModel(
+      {this.id, this.date, this.imc, required this.peso, required this.altura});
 
   double calcularImc() {
     return peso / (altura * altura);
@@ -29,5 +33,27 @@ class ImcModel {
     } else {
       return 'Valor inválido';
     }
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'peso': peso,
+      'altura': altura,
+      'imc': calcularImc(),
+      'categoria': categoriaImc(),
+      'date': DateTime.now().toIso8601String()
+    };
+  }
+
+  factory ImcModel.fromMap(Map<String, dynamic> map) {
+    return ImcModel(
+      id: map['id'],
+      peso: map['peso'],
+      altura: map['altura'],
+      imc: map['imc'],
+      date: DateTime.parse(map['date']),
+      // If 'date' is not provided, use current date and time
+    );
   }
 }

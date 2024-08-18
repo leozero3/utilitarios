@@ -42,3 +42,17 @@ class Calculado extends ImcState {
         altura,
       ];
 }
+
+class SaveImcSuccess extends ImcState {
+  @override
+  List<Object?> get props => [];
+}
+
+class SaveImcError extends ImcState {
+  final String message;
+
+  SaveImcError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

@@ -20,7 +20,7 @@ class CalculateImc extends ImcEvent {
 class UpdatePeso extends ImcEvent {
   final double peso;
 
-  UpdatePeso({required this.peso});
+  const UpdatePeso({required this.peso});
 
   @override
   List<Object> get props => [peso];
@@ -29,8 +29,10 @@ class UpdatePeso extends ImcEvent {
 class UpdateAltura extends ImcEvent {
   final double altura;
 
-  UpdateAltura({required this.altura});
+  const UpdateAltura({required this.altura});
 
   @override
   List<Object> get props => [altura];
 }
+
+class SaveImcEvent extends ImcEvent {}

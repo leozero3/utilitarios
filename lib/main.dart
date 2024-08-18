@@ -3,7 +3,7 @@ import 'package:utilitarios/di/service_locator.dart';
 import 'app.dart';
 
 void main() {
-  setupServiceLocator();
+  setup();
 
   runApp(MyApp());
 }

@@ -9,13 +9,11 @@ class HomeScreen extends StatelessWidget {
     final List<Map<String, String>> utilities = [
       {'title': 'Tempo', 'route': '/tempo'},
       {'title': 'Calculadora de IMC', 'route': '/calculadora-imc'},
+      {'title': 'Alcool ou Gasolina', 'route': '/combustivel'},
+
       {'title': 'Calculadora', 'route': '/calculadora'},
       {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
       {'title': 'Despertador', 'route': '/despertador'},
-      {
-        'title': 'Monitoramento de Consumo de Combustível',
-        'route': '/monitoramento-combustivel'
-      },
       {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
       {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
       {'title': 'Controle de Despesas', 'route': '/controle-despesas'},
