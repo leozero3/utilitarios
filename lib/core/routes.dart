@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:utilitarios/modules/fuel/view/fuel_screen.dart';
 import 'package:utilitarios/modules/weather/screen/weather_screen.dart';
 import 'package:utilitarios/modules/calculadora/calculadora_screen.dart';
 import 'package:utilitarios/modules/imc/view/imc_screen.dart';
@@ -21,5 +22,9 @@ final List<GoRoute> appRoutes = [
   GoRoute(
     path: '/calculadora-imc',
     builder: (context, state) => const ImcScreen(),
+  ),
+  GoRoute(
+    path: '/combustivel',
+    builder: (context, state) => const FuelScreen(),
   ),
 ];

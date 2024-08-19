@@ -7,32 +7,43 @@ sealed class FuelState extends Equatable {
   List<Object> get props => [];
 }
 
-final class FuelInitial extends FuelState {}
-
-final class FuelLoaded extends FuelState {
+class FuelLoaded extends FuelState {
   final double alcoholPrice;
   final double gasolinePrice;
   final double? result;
+  final bool? isAlcoholBetter;
+  final bool isCalculationDone;
 
   const FuelLoaded({
     required this.alcoholPrice,
     required this.gasolinePrice,
     this.result,
+    this.isAlcoholBetter,
+    this.isCalculationDone = false,
   });
 
-  // Implementação do copyWith
   FuelLoaded copyWith({
     double? alcoholPrice,
     double? gasolinePrice,
     double? result,
+    bool? isAlcoholBetter,
+    bool? isCalculationDone,
   }) {
     return FuelLoaded(
       alcoholPrice: alcoholPrice ?? this.alcoholPrice,
       gasolinePrice: gasolinePrice ?? this.gasolinePrice,
       result: result ?? this.result,
+      isAlcoholBetter: isAlcoholBetter ?? this.isAlcoholBetter,
+      isCalculationDone: isCalculationDone ?? this.isCalculationDone,
     );
   }
 
   @override
-  List<Object> get props => [alcoholPrice, gasolinePrice, result ?? 0.0];
+  List<Object> get props => [
+        alcoholPrice,
+        gasolinePrice,
+        result ?? 0.0,
+        isAlcoholBetter ?? false,
+        isCalculationDone,
+      ];
 }
