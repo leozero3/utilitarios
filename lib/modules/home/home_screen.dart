@@ -10,12 +10,12 @@ class HomeScreen extends StatelessWidget {
       {'title': 'Tempo', 'route': '/tempo'},
       {'title': 'Calculadora de IMC', 'route': '/calculadora-imc'},
       {'title': 'Alcool ou Gasolina', 'route': '/combustivel'},
+      {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
 
       {'title': 'Calculadora', 'route': '/calculadora'},
       {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
       {'title': 'Despertador', 'route': '/despertador'},
       {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
-      {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
       {'title': 'Controle de Despesas', 'route': '/controle-despesas'},
       {'title': 'Monitor de Atividade Física', 'route': '/monitor-atividade'},
       {'title': 'Conversor de Unidades', 'route': '/conversor-unidades'},

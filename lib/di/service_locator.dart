@@ -1,10 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:utilitarios/modules/currency_converter/services/dio_client.dart.dart';
 
 final getIt = GetIt.instance;
 
 void setup() {
   // // Registre o repositório
-  // getIt.registerLazySingleton<ImcRepository>(() => ImcRepository());
+  getIt.registerSingleton<DioClient>(DioClient(Dio()));
 
   // // Registre o bloco de histórico
   // getIt.registerLazySingleton<ImcHistoryBloc>(

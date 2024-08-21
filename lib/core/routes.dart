@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:utilitarios/modules/currency_converter/view/currency_converter.dart';
 import 'package:utilitarios/modules/fuel/view/fuel_screen.dart';
 import 'package:utilitarios/modules/weather/screen/weather_screen.dart';
 import 'package:utilitarios/modules/calculadora/calculadora_screen.dart';
@@ -10,7 +11,6 @@ final List<GoRoute> appRoutes = [
     path: '/',
     builder: (context, state) => HomeScreen(),
   ),
-  // Defina outras rotas para cada funcionalidade aqui, exemplo:
   GoRoute(
     path: '/tempo',
     builder: (context, state) => const WeatherScreen(),
@@ -26,5 +26,9 @@ final List<GoRoute> appRoutes = [
   GoRoute(
     path: '/combustivel',
     builder: (context, state) => const FuelScreen(),
+  ),
+  GoRoute(
+    path: '/conversor-moedas',
+    builder: (context, state) => CurrencyConverter(),
   ),
 ];
