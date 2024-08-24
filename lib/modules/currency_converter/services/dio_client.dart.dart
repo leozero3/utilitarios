@@ -15,13 +15,13 @@ class DioClient {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       }
-      ..options.connectTimeout = Duration(seconds: 5)
-      ..options.receiveTimeout = Duration(seconds: 3);
+      ..options.connectTimeout = Duration(seconds: 7)
+      ..options.receiveTimeout = Duration(seconds: 7);
   }
 
   Future<Response> getReq(String coin) async {
     try {
-      final response = await _dio.get('json/last/$coin');
+      final response = await _dio.get('$coin');
       if (response.statusCode == 200) {
         log('SUCESSO: ${response.data}');
         return response;
