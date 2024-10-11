@@ -5,10 +5,16 @@ import 'package:utilitarios/modules/currency_converter/bloc/currency_converter_b
 import 'package:utilitarios/modules/currency_converter/services/dio_client.dart.dart';
 import 'package:utilitarios/modules/currency_converter/view/currency_converter.dart';
 import 'package:utilitarios/modules/fuel/view/fuel_screen.dart';
+import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
+import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
+import 'package:utilitarios/modules/water_reminder/services/alarm_service.dart';
+import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
+import 'package:utilitarios/modules/water_reminder/view/water_reminder_screen.dart';
 import 'package:utilitarios/modules/weather/screen/weather_screen.dart';
 import 'package:utilitarios/modules/calculadora/calculadora_screen.dart';
 import 'package:utilitarios/modules/imc/view/imc_screen.dart';
 import 'package:utilitarios/modules/home/home_screen.dart';
+import 'package:get_it/get_it.dart';
 
 final List<GoRoute> appRoutes = [
   GoRoute(
@@ -38,6 +44,19 @@ final List<GoRoute> appRoutes = [
       return BlocProvider(
         create: (_) => CurrencyConverterBloc(DioClient(dio)),
         child: const CurrencyConverter(),
+      );
+    },
+  ),
+  GoRoute(
+    path: '/lembrete-agua',
+    builder: (context, state) {
+      return BlocProvider(
+        create: (context) => WaterReminderCubit(
+          GetIt.I<WaterReminderRepository>(),
+          GetIt.I<NotificationService>(),
+          GetIt.I<AlarmService>(),
+        ),
+        child: WaterReminderScreen(),
       );
     },
   ),

@@ -18,6 +18,8 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
   Map<String, List<Currency>> _currencyPairs = {}; // Pares de conversão
   Currency? _selectedBaseCurrency;
   Currency? _selectedTargetCurrency;
+  final TextEditingController _inputValueController = TextEditingController();
+  double? _result;
 
   @override
   void initState() {
@@ -77,6 +79,19 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
     });
   }
 
+  void _calculateResult(double rate) {
+    final double? inputValue = double.tryParse(_inputValueController.text);
+    if (inputValue != null) {
+      setState(() {
+        _result = inputValue * rate;
+      });
+    } else {
+      setState(() {
+        _result = null;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,6 +101,7 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
       body: Center(
         child: Column(
           children: [
+            SizedBox(height: 30),
             DropdownButton<Currency>(
               value: _selectedBaseCurrency,
               hint: const Text('Selecione uma moeda base'),
@@ -93,6 +109,9 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
                 setState(() {
                   _selectedBaseCurrency = newValue;
                   _selectedTargetCurrency = null; // Reseta a moeda de destino
+                  _inputValueController
+                      .clear(); // Limpa o valor do campo de entrada
+                  _result = null; // Reseta o resultado
                 });
               },
               items: _currencies
@@ -110,6 +129,9 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
                 onChanged: (Currency? newValue) {
                   setState(() {
                     _selectedTargetCurrency = newValue;
+                    _inputValueController
+                        .clear(); // Limpa o valor do campo de entrada
+                    _result = null; // Reseta o resultado
                   });
                   if (_selectedBaseCurrency != null && newValue != null) {
                     context.read<CurrencyConverterBloc>().add(
@@ -126,22 +148,74 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
                   );
                 }).toList(),
               ),
+            SizedBox(height: 30),
             BlocBuilder<CurrencyConverterBloc, CurrencyConverterState>(
               builder: (context, state) {
                 if (state is CurrencyConverterLoading) {
                   return const CircularProgressIndicator();
                 } else if (state is CurrencyConverterLoaded) {
-                  return _buildCurrencyData(state.currencyData);
+                  return Center(
+                      child: Column(
+                    children: [
+                      _buildCurrencyData(state.currencyData),
+                      SizedBox(height: 30),
+                      Divider(),
+                      SizedBox(height: 30),
+                    ],
+                  ));
                 } else if (state is CurrencyConverterError) {
                   return Text(state.error);
                 }
                 return Container();
               },
             ),
+            BlocBuilder<CurrencyConverterBloc, CurrencyConverterState>(
+              builder: (context, state) {
+                if (state is CurrencyConverterLoaded) {
+                  final currencyData = state.currencyData;
+                  return Column(
+                    children: [
+                      Text('Conversor'),
+                      Text(currencyData.code),
+                      SizedBox(
+                        width: 200,
+                        child: TextField(
+                          controller: _inputValueController,
+                          onChanged: (value) =>
+                              _calculateResult(currencyData.bid),
+                          keyboardType: TextInputType.number,
+                          maxLength: 15,
+                          maxLines: 1,
+                          minLines: 1,
+                          decoration: InputDecoration(
+                              label: Text('Insira o valor'),
+                              border: OutlineInputBorder()),
+                        ),
+                      ),
+                      Text(_result == null ? '' : currencyData.codeIn),
+
+                      const SizedBox(height: 20),
+
+                      Text(_result == null
+                          ? ''
+                          : 'Resultado : ${_result?.toStringAsFixed(2)} ${currencyData.codeIn}'), // exibir valor resultado dos textfield * ou outro
+                    ],
+                  );
+                }
+
+                return Text('asd');
+              },
+            )
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _inputValueController.dispose();
+    super.dispose();
   }
 
   Widget _buildCurrencyData(CurrencyConverterModel data) {
@@ -150,14 +224,15 @@ class _CurrencyConverterState extends State<CurrencyConverter> {
       children: [
         Text('Moeda: ${data.code}'),
         Text('Nome: ${data.name}'),
-        Text('Máximo: ${data.high}'),
-        Text('Mínimo: ${data.low}'),
+        Text('Máximo: ${data.high.toStringAsFixed(2)}'),
+        Text('Mínimo: ${data.low.toStringAsFixed(2)}'),
         Text('Variação: ${data.varBid}'),
-        Text('Percentual de Variação: ${data.pctChange}%'),
-        Text('Compra: ${data.bid}'),
-        Text('Venda: ${data.ask}'),
+        Text('Percentual de Variação: ${data.pctChange.toStringAsFixed(2)}%'),
+        Text('Compra: ${data.bid.toStringAsFixed(2)}'),
+        Text('Venda: ${data.ask.toStringAsFixed(2)}'),
         Text('Data de Criação: ${data.createDate}'),
-        Text('1 ${data.code} equivale a ${data.bid} ${data.codeIn}'),
+        Text(
+            '1 ${data.code} equivale a ${data.bid.toStringAsFixed(2)} ${data.codeIn}'),
       ],
     );
   }

@@ -1,19 +1,29 @@
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
-import 'package:utilitarios/modules/currency_converter/services/dio_client.dart.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:utilitarios/modules/water_reminder/database/database.dart';
+import 'package:utilitarios/modules/water_reminder/repository/impl_water_reminder_repository.dart';
+import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
+import 'package:utilitarios/modules/water_reminder/services/alarm_service.dart';
+import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
 
 final getIt = GetIt.instance;
 
-void setup() {
-  // // Registre o repositório
-  getIt.registerSingleton<DioClient>(DioClient(Dio()));
+Future<void> setup() async {
+  getIt.registerSingleton<FlutterLocalNotificationsPlugin>(
+      FlutterLocalNotificationsPlugin());
 
-  // // Registre o bloco de histórico
-  // getIt.registerLazySingleton<ImcHistoryBloc>(
-  //     () => ImcHistoryBloc(getIt<ImcRepository>()));
+  getIt.registerSingletonAsync<Database>(() async {
+    return DatabaseService.initDatabase();
+  });
 
-  // // Registre o bloco de IMC com o bloco de histórico injetado
-  // getIt.registerLazySingleton<ImcBloc>(
-  //   () => ImcBloc(getIt<ImcHistoryBloc>()),
-  // );
+  getIt.registerSingletonWithDependencies<WaterReminderRepository>(
+      () => ImplWaterReminderRepository(getIt.get<Database>()),
+      dependsOn: [Database]);
+
+  getIt.registerSingleton<NotificationService>(
+      NotificationService(getIt.get<FlutterLocalNotificationsPlugin>()));
+
+  getIt.registerSingleton<AlarmService>(AlarmService());
 }

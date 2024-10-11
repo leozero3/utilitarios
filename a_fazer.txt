@@ -1,0 +1,3 @@
+arrumar exibicao da hora
+exibir icones de agua e agua restante e horarios abaixo
+editar lembrete

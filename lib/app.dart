@@ -24,6 +24,8 @@ class MyApp extends StatelessWidget {
       routerConfig: _router,
       title: 'Utilidades',
       theme: ThemeData(
+        primaryColor: Colors.blueAccent,
+        brightness: Brightness.dark, // Define o tema como dark mode
         primarySwatch: Colors.blue,
       ),
     );
