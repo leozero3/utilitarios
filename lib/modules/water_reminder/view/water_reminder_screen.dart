@@ -11,6 +11,8 @@ class WaterReminderScreen extends StatefulWidget {
 }
 
 class _WaterReminderScreenState extends State<WaterReminderScreen> {
+  bool _calculatedDoses = false;
+
   @override
   void initState() {
     super.initState();
@@ -23,15 +25,18 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       appBar: AppBar(title: Text('Lembrete de Água')),
       body: BlocBuilder<WaterReminderCubit, WaterReminderState>(
         builder: (context, state) {
+          if (state.status == WaterReminderStatus.loaded && !_calculatedDoses) {
+            // Calcular doses uma única vez quando o estado for carregado
+            BlocProvider.of<WaterReminderCubit>(context)
+                .calculateDoseDetails(state.reminder!);
+            _calculatedDoses = true; // Marcar que as doses já foram calculadas
+          }
+
           switch (state.status) {
             case WaterReminderStatus.loading:
               return Center(child: CircularProgressIndicator());
 
             case WaterReminderStatus.loaded:
-              // Calcular doses e intervalos
-              BlocProvider.of<WaterReminderCubit>(context)
-                  .calculateDoseDetails(state.reminder!);
-
               return Column(
                 children: [
                   Text(

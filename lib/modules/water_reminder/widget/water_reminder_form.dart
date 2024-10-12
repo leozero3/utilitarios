@@ -38,43 +38,24 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
   void _saveReminder() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!
-          .save(); // Salva os valores dos campos de formulário
+          .save(); // Aqui salvamos os valores dos campos de formulário
 
       if (startHour != null && endHour != null) {
         final startHourDouble = startHour!.hour + startHour!.minute / 60;
         final endHourDouble = endHour!.hour + endHour!.minute / 60;
 
-        // Verifica se todos os campos necessários foram preenchidos
-        if (totalLiters != null && doseAmount != null && doseAmount! > 0) {
-          // Calcula o número de doses
-          int numberOfDoses = (totalLiters! * 1000 / doseAmount!).ceil();
+        final reminder = WaterReminderModel(
+          id: 0, // Defina o ID correto, se necessário
+          totalLiters: totalLiters ?? 0.0,
+          startHour: startHourDouble,
+          endHour: endHourDouble,
+          doseAmount: doseAmount ?? 0.0,
+          doseTimes: [], // Será calculado pelo Cubit
+        );
 
-          // Calcula o intervalo entre as doses
-          double interval = (endHourDouble - startHourDouble) / numberOfDoses;
-
-          // Cria a lista de horários para as doses
-          List<double> doseTimes = [];
-          for (int i = 0; i < numberOfDoses; i++) {
-            doseTimes.add(startHourDouble + i * interval);
-          }
-
-          // Cria o modelo WaterReminderModel com os horários calculados
-          final reminder = WaterReminderModel(
-            id: 0, // Defina o ID correto, se necessário
-            totalLiters: totalLiters ?? 0.0,
-            startHour: startHourDouble,
-            endHour: endHourDouble,
-            doseAmount: doseAmount ?? 0.0,
-            doseTimes: doseTimes, // Horários calculados
-          );
-
-          // Salva e agenda as notificações e alarmes
-          await BlocProvider.of<WaterReminderCubit>(context)
-              .saveWaterReminder(reminder);
-        } else {
-          // Exiba uma mensagem de erro caso algum campo esteja faltando
-          print('Total de litros ou quantidade por dose não foi preenchida');
-        }
+        // Salva e agenda as notificações e alarmes
+        await BlocProvider.of<WaterReminderCubit>(context)
+            .saveWaterReminder(reminder);
       } else {
         // Exiba uma mensagem de erro caso as horas não sejam selecionadas
         print('Hora de início ou fim não foi selecionada');

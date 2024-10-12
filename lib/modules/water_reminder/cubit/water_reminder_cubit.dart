@@ -34,10 +34,13 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
         _scheduleDailyReminders(reminder);
         // Emitir o estado carregado se o lembrete existir
         emit(WaterReminderState.loaded(reminder));
+        log('loadWaterReminder loaded');
       } else {
         // Emitir o estado inicial se nenhum lembrete for encontrado
         emit(WaterReminderState.initial());
+        log('loadWaterReminder initial');
       }
+      log('loadWaterReminder--------------------------------');
     } catch (e) {
       // Emitir o estado de erro em caso de exceção
       log('Erro ao carregar lembrete de água: $e'); // Log do erro completo
@@ -49,9 +52,15 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
   Future<void> saveWaterReminder(WaterReminderModel reminder) async {
     try {
       emit(WaterReminderState.loading());
+
+      // Cálculo dos horários das doses antes de salvar
+      // calculateDoseDetails(reminder);
+
       await repository.saveWaterReminder(reminder);
       _scheduleReminders(reminder);
       emit(WaterReminderState.loaded(reminder));
+
+      log('Salvou ------------------');
     } catch (e) {
       emit(WaterReminderState.error('Erro ao salvar o lembrete de agua'));
       log(e.toString());
@@ -105,14 +114,21 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
 
       final intervalInMinutes = (totalMinutes / totalDoses).ceil();
 
+      // Reset the doseTimes list to prevent duplicate or infinite loops
       List<double> doseTimes = [];
+
       for (int i = 0; i < totalDoses; i++) {
         final doseTimeInMinutes = startHourInMinutes + (i * intervalInMinutes);
+        if (doseTimeInMinutes > endHourInMinutes) {
+          break; // Stop if dose time exceeds the end time
+        }
         final doseTimeHour = doseTimeInMinutes ~/ 60;
         final doseTimeMinute = doseTimeInMinutes % 60;
         doseTimes.add(doseTimeHour + doseTimeMinute / 60); // Hora decimal
+        log('-----------Dose time: $doseTimeHour:$doseTimeMinute');
       }
-      log(doseTimes.toString());
+
+      log('Calculated doseTimes: $doseTimes');
 
       // Atualizar o lembrete e emitir o estado atualizado
       final updatedReminder = reminder.copyWith(doseTimes: doseTimes);
@@ -158,16 +174,21 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       final hour = doseTime.toInt();
       final minute = ((doseTime - hour) * 60).toInt();
 
-      // Agendar notificação
-      notificationService.scheduleNotification(
-        hour,
-        minute.toDouble(),
-        'Hora de beber água!',
-      );
+      // Evitar agendamentos duplicados
+      if (hour >= 0 && hour <= 23 && minute >= 0 && minute < 60) {
+        // Agendar notificação
+        notificationService.scheduleNotification(
+          hour,
+          minute.toDouble(),
+          'Hora de beber água!',
+        );
 
-      // Agendar alarme
-      alarmService.scheduleAlarm(hour, minute);
-      log('Agendado: $hour:$minute');
+        // Agendar alarme
+        alarmService.scheduleAlarm(hour, minute);
+        log('Agendado: $hour:$minute');
+      } else {
+        log('Horário de dose inválido: $hour:$minute');
+      }
     }
   }
 
@@ -186,6 +207,8 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       resetTime.minute.toDouble(),
       'Reinício do lembrete de água!',
     );
+
+    log('Agendado reset diário às ${resetTime.hour}:${resetTime.minute}');
 
     // Após reset, agendar novamente as doses do dia seguinte
     _scheduleReminders(reminder); // Chamar apenas se houver doses
