@@ -41,7 +41,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
         log('loadWaterReminder initial');
       }
       log('loadWaterReminder--------------------------------');
-    } catch (e) {
+    } on Exception catch (e) {
       // Emitir o estado de erro em caso de exceção
       log('Erro ao carregar lembrete de água: $e'); // Log do erro completo
       emit(WaterReminderState.error(
@@ -54,7 +54,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       emit(WaterReminderState.loading());
 
       // Cálculo dos horários das doses antes de salvar
-      // calculateDoseDetails(reminder);
+      await calculateDoseDetails(reminder);
 
       await repository.saveWaterReminder(reminder);
       _scheduleReminders(reminder);
@@ -87,12 +87,13 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
     }
   }
 
-  void calculateDoseDetails(WaterReminderModel reminder) {
+  Future<void> calculateDoseDetails(WaterReminderModel reminder) async {
     try {
       final totalLiters = reminder.totalLiters;
       final doseAmount = reminder.doseAmount;
       final startHour = reminder.startHour;
       final endHour = reminder.endHour;
+      List<double> doseTimes = [];
 
       // Verificar se os valores de entrada são válidos
       if (doseAmount <= 0 || totalLiters <= 0 || startHour >= endHour) {
@@ -115,7 +116,6 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       final intervalInMinutes = (totalMinutes / totalDoses).ceil();
 
       // Reset the doseTimes list to prevent duplicate or infinite loops
-      List<double> doseTimes = [];
 
       for (int i = 0; i < totalDoses; i++) {
         final doseTimeInMinutes = startHourInMinutes + (i * intervalInMinutes);
@@ -125,6 +125,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
         final doseTimeHour = doseTimeInMinutes ~/ 60;
         final doseTimeMinute = doseTimeInMinutes % 60;
         doseTimes.add(doseTimeHour + doseTimeMinute / 60); // Hora decimal
+        reminder.doseTimes;
         log('-----------Dose time: $doseTimeHour:$doseTimeMinute');
       }
 
@@ -142,27 +143,6 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       log('Erro ao calcular detalhes da dose: $e');
     }
   }
-
-  // void _scheduleReminders(WaterReminderModel reminder) {
-  //   final int totalMinutes =
-  //       ((reminder.endHour - reminder.startHour) * 60).toInt();
-  //   final double intervals =
-  //       totalMinutes / (reminder.totalLiters / reminder.doseAmount);
-  //   log(intervals.toString());
-
-  //   for (int i = 0;
-  //       i <= (reminder.totalLiters / reminder.doseAmount).toInt();
-  //       i++) {
-  //     int reminderTime = (reminder.startHour * 60 + (intervals * i)).toInt();
-  //     int hour = reminderTime ~/ 60;
-  //     int minute = reminderTime % 60;
-  //     log(reminderTime.toString());
-
-  //     notificationService.scheduleNotification(
-  //         hour, minute.toDouble(), 'Hora de beber água!');
-  //     alarmService.scheduleAlarm(hour, minute);
-  //   }
-  // }
 
   void _scheduleReminders(WaterReminderModel reminder) {
     if (reminder.doseTimes.isEmpty) {

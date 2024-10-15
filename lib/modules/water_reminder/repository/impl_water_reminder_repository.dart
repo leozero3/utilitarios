@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
 
@@ -22,26 +24,30 @@ class ImplWaterReminderRepository implements WaterReminderRepository {
 
   @override
   Future<void> saveWaterReminder(WaterReminderModel reminder) async {
-    await _database.insert(
-      'water_reminder',
-      reminder.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    try {
+      await _database.insert(
+        'water_reminder',
+        reminder.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    } catch (e) {
+      log('saveWaterReminder $e');
+    }
   }
 
   @override
   Future<WaterReminderModel?> getWaterReminder(int id) async {
-    final List<Map<String, dynamic>> maps = await _database.query(
-      'water_reminder',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    // final List<Map<String, dynamic>> maps = await _database.query(
+    //   'water_reminder',
+    //   where: 'id = ?',
+    //   whereArgs: [id],
+    // );
 
-    if (maps.isNotEmpty) {
-      return WaterReminderModel.fromMap(maps.first);
-    }
-    ;
-    return null;
+    // if (maps.isNotEmpty) {
+    //   return WaterReminderModel.fromMap(maps.first);
+    // }
+
+    // return null;
   }
 
   @override

@@ -4,7 +4,7 @@ class WaterReminderModel {
   final double startHour; // Hora inicial (agora em double)
   final double endHour; // Hora final (agora em double)
   final double doseAmount; // Quantidade por dose
-  final List<double> doseTimes;
+  final List doseTimes;
 
   WaterReminderModel({
     required this.id,
@@ -22,7 +22,7 @@ class WaterReminderModel {
     double? startHour,
     double? endHour,
     double? doseAmount,
-    List<double>? doseTimes,
+    List? doseTimes,
   }) {
     return WaterReminderModel(
       id: id ?? this.id,
@@ -53,8 +53,10 @@ class WaterReminderModel {
       startHour: map['startHour'],
       endHour: map['endHour'],
       doseAmount: map['doseAmount'],
-      doseTimes:
-          map['doseTimes'].split(',').map((e) => double.parse(e)).toList(),
+      doseTimes: (map['doseTimes'] as String)
+          .split(',')
+          .map((e) => double.parse(e))
+          .toList(),
     );
   }
 }
