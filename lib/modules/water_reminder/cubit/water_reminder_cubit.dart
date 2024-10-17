@@ -1,24 +1,23 @@
 import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
+import 'package:utilitarios/main.dart';
 import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
 import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
-import 'package:utilitarios/modules/water_reminder/services/alarm_service.dart';
 import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 part 'water_reminder_state.dart';
 
 class WaterReminderCubit extends Cubit<WaterReminderState> {
   final WaterReminderRepository repository;
   final NotificationService notificationService;
-  final AlarmService alarmService;
+  // final AlarmService alarmService;
 
   WaterReminderCubit(
     this.repository,
     this.notificationService,
-    this.alarmService,
+    // this.alarmService,
   ) : super(WaterReminderState.initial());
 
   Future<void> loadWaterReminder() async {
@@ -147,24 +146,37 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
   void _scheduleReminders(WaterReminderModel reminder) {
     if (reminder.doseTimes.isEmpty) {
       log('Nenhuma dose a ser agendada.');
-      return; // Prevenir loop infinito caso a lista esteja vazia
+      return;
     }
 
     for (double doseTime in reminder.doseTimes) {
       final hour = doseTime.toInt();
       final minute = ((doseTime - hour) * 60).toInt();
 
-      // Evitar agendamentos duplicados
       if (hour >= 0 && hour <= 23 && minute >= 0 && minute < 60) {
-        // Agendar notificação
-        notificationService.scheduleNotification(
+        final now = DateTime.now();
+        final scheduledDate = DateTime(
+          now.year,
+          now.month,
+          now.day,
           hour,
-          minute.toDouble(),
-          'Hora de beber água!',
+          minute,
         );
 
-        // Agendar alarme
-        alarmService.scheduleAlarm(hour, minute);
+        // Convertemos DateTime para TZDateTime (se estiver usando timezones)
+        final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
+
+        // Usando um ID único para cada notificação
+        final notificationId = scheduledDate.millisecondsSinceEpoch ~/ 1000;
+
+        // Agendar notificação
+        notificationService.scheduleNotification(
+          notificationId, // O ID da notificação (int)
+          'Hora de beber água!', // Título da notificação
+          'Beba ${reminder.doseAmount.toString()} ml de água', // Conteúdo da notificação
+          tzScheduledDate, // A data e hora (TZDateTime)
+        );
+
         log('Agendado: $hour:$minute');
       } else {
         log('Horário de dose inválido: $hour:$minute');
@@ -172,26 +184,24 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
     }
   }
 
-  void _scheduleDailyReminders(WaterReminderModel reminder) {
-    if (reminder.doseTimes.isEmpty) {
-      log('Nenhuma dose a ser agendada para o próximo dia.');
-      return; // Prevenir loop infinito caso a lista esteja vazia
+  void _scheduleDailyReminders(WaterReminderModel reminder) async {
+    // Limpar notificações antigas
+    await flutterLocalNotificationsPlugin.cancelAll();
+
+    for (int i = 0; i < reminder.doseTimes.length; i++) {
+      // Calcular o horário da dose baseado em doseTimes
+      final doseTime = reminder.doseTimes[i];
+      final scheduledTime = DateTime.now().add(Duration(
+          hours: doseTime.floor(), minutes: ((doseTime % 1) * 60).toInt()));
+
+      // Agendar a notificação com TZDateTime
+      await notificationService.scheduleNotification(
+        i, // ID único para cada notificação
+        'Hora de beber água!',
+        'Beba ${reminder.doseAmount} ml de água',
+        scheduledTime,
+      );
     }
-
-    final DateTime now = DateTime.now();
-    final DateTime resetTime = DateTime(now.year, now.month, now.day + 1, 0, 0);
-
-    // Agendar uma notificação para o reset diário do lembrete à meia-noite
-    notificationService.scheduleNotification(
-      resetTime.hour,
-      resetTime.minute.toDouble(),
-      'Reinício do lembrete de água!',
-    );
-
-    log('Agendado reset diário às ${resetTime.hour}:${resetTime.minute}');
-
-    // Após reset, agendar novamente as doses do dia seguinte
-    _scheduleReminders(reminder); // Chamar apenas se houver doses
   }
 
   Future<void> resetReminder() async {

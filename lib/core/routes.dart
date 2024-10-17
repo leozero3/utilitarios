@@ -54,7 +54,7 @@ final List<GoRoute> appRoutes = [
         create: (context) => WaterReminderCubit(
           GetIt.I<WaterReminderRepository>(),
           GetIt.I<NotificationService>(),
-          GetIt.I<AlarmService>(),
+          // GetIt.I<AlarmService>(),
         ),
         child: WaterReminderScreen(),
       );

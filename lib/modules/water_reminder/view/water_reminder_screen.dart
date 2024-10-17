@@ -11,8 +11,6 @@ class WaterReminderScreen extends StatefulWidget {
 }
 
 class _WaterReminderScreenState extends State<WaterReminderScreen> {
-  bool _calculatedDoses = false;
-
   @override
   void initState() {
     super.initState();
@@ -22,64 +20,18 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Lembrete de Água')),
+      appBar: AppBar(title: const Text('Lembrete de Água')),
       body: BlocBuilder<WaterReminderCubit, WaterReminderState>(
         builder: (context, state) {
-          if (state.status == WaterReminderStatus.loaded && !_calculatedDoses) {
-            // Calcular doses uma única vez quando o estado for carregado
-            BlocProvider.of<WaterReminderCubit>(context)
-                .calculateDoseDetails(state.reminder!);
-            _calculatedDoses = true; // Marcar que as doses já foram calculadas
-          }
-
           switch (state.status) {
             case WaterReminderStatus.loading:
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
 
             case WaterReminderStatus.loaded:
-              return Column(
-                children: [
-                  Text(
-                    'Você deseja beber ${state.reminder!.totalLiters} litros de água por dia.',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Horário: ${state.reminder!.startHour} às ${state.reminder!.endHour}',
-                  ),
-                  Text('Dose média: ${state.reminder!.doseAmount} ml'),
-                  Text('Total de doses: ${state.totalDoses}'),
-                  Text(
-                      'Intervalo entre doses: ${state.intervalInMinutes} minutos'),
-                  ElevatedButton(
-                    onPressed: () {
-                      BlocProvider.of<WaterReminderCubit>(context)
-                          .deleteWaterReminder(state.reminder!.id);
-                    },
-                    child: Text('Deletar Lembrete'),
-                  ),
-                ],
-              );
+              return _buildLoadedState(context, state);
 
             case WaterReminderStatus.error:
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      state.errorMessage ?? 'Erro desconhecido',
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () async {
-                        await BlocProvider.of<WaterReminderCubit>(context)
-                            .resetReminder();
-                      },
-                      child: Text('Resetar Lembrete'),
-                    ),
-                  ],
-                ),
-              );
+              return _buildErrorState(context, state);
 
             case WaterReminderStatus.initial:
             default:
@@ -89,4 +41,68 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
       ),
     );
   }
+}
+
+Widget _buildLoadedState(BuildContext context, WaterReminderState state) {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Você deseja beber ${state.reminder!.totalLiters} litros de água por dia.',
+          style: const TextStyle(fontSize: 20),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Horário: ${state.reminder!.startHour} às ${state.reminder!.endHour}',
+        ),
+        Text('Dose média: ${state.reminder!.doseAmount} ml'),
+        Text('Total de doses: ${state.totalDoses}'),
+        Text('Intervalo entre doses: ${state.intervalInMinutes} minutos'),
+        const SizedBox(height: 20),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<WaterReminderCubit>(context)
+                    .deleteWaterReminder(state.reminder!.id);
+              },
+              child: const Text('Deletar Lembrete'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await BlocProvider.of<WaterReminderCubit>(context)
+                    .resetReminder();
+              },
+              child: const Text('Resetar Lembrete'),
+            ),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildErrorState(BuildContext context, WaterReminderState state) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          state.errorMessage ?? 'Erro desconhecido',
+          style: const TextStyle(color: Colors.red, fontSize: 18),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () async {
+            await BlocProvider.of<WaterReminderCubit>(context).resetReminder();
+          },
+          child: const Text('Resetar Lembrete'),
+        ),
+      ],
+    ),
+  );
 }

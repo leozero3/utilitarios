@@ -25,5 +25,5 @@ Future<void> setup() async {
   getIt.registerSingleton<NotificationService>(
       NotificationService(getIt.get<FlutterLocalNotificationsPlugin>()));
 
-  getIt.registerSingleton<AlarmService>(AlarmService());
+  // getIt.registerSingleton<AlarmService>(AlarmService());
 }
