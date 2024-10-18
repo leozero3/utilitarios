@@ -42,6 +42,17 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
   }
 
   void _saveReminder() async {
+    // Verificar se as notificações estão habilitadas
+    bool notificationsEnabled =
+        await BlocProvider.of<WaterReminderCubit>(context)
+            .notificationService
+            .areNotificationsEnable();
+
+    if (!notificationsEnabled) {
+      // Se as notificações estiverem desabilitadas, exibir o diálogo
+      _showEnableNotificationDialog();
+      return; // Não continua até que as notificações estejam habilitadas
+    }
     if (startHour != null && endHour != null) {
       final startHourDouble = startHour!.hour + startHour!.minute / 60;
       final endHourDouble = endHour!.hour + endHour!.minute / 60;
@@ -92,6 +103,27 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
         SnackBar(content: Text('Selecione as horas de início e fim!')),
       );
     }
+  }
+
+  void _showEnableNotificationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Notificações Desabilitadas'),
+          content:
+              Text('Por favor, ative as notificações para salvar o lembrete.'),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

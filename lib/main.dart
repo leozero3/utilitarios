@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:utilitarios/core/services/setup_notification_service.dart';
 import 'package:utilitarios/di/service_locator.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'app.dart';
@@ -9,16 +10,10 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Alarm.init();
   tz.initializeTimeZones();
 
-  const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings(
-          '@mipmap/ic_launcher'); // Ícone da notificação
-  final InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
+  await setupNotificationService();
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   await setup();
   // Future<void> checkAndroidScheduleExactAlarmPermission() async {
   //   final status = await Permission.scheduleExactAlarm.status;

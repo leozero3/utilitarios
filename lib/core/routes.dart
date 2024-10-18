@@ -7,7 +7,6 @@ import 'package:utilitarios/modules/currency_converter/view/currency_converter.d
 import 'package:utilitarios/modules/fuel/view/fuel_screen.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
-import 'package:utilitarios/modules/water_reminder/services/alarm_service.dart';
 import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
 import 'package:utilitarios/modules/water_reminder/view/water_reminder_screen.dart';
 import 'package:utilitarios/modules/weather/screen/weather_screen.dart';
