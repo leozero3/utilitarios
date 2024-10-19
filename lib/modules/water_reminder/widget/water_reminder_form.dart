@@ -1,5 +1,7 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
 
@@ -105,20 +107,31 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
     }
   }
 
-  void _showEnableNotificationDialog() {
+  Future<void> _showEnableNotificationDialog() async {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Notificações Desabilitadas'),
-          content:
-              Text('Por favor, ative as notificações para salvar o lembrete.'),
+          title: Text(
+            'Ativar Notificações',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: Text(
+              'As notificações estão desativadas. Por favor, ative-as nas configurações do seu dispositivo para receber lembretes.'),
           actions: [
             TextButton(
-              child: Text('OK'),
               onPressed: () {
-                Navigator.of(context).pop();
+                context.pop(); // Fechar o diálogo
               },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Abrir as configurações do aplicativo
+                AppSettings.openAppSettings(type: AppSettingsType.notification);
+                context.pop();
+              },
+              child: Text('Abrir Configurações'),
             ),
           ],
         );
@@ -135,7 +148,8 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Slider para selecionar a quantidade total de litros de água
-            Text('Selecione a quantidade total de água (litros):'),
+            Text('Selecione a quantidade de água (litros):'),
+            Text('${totalLiters.toStringAsFixed(1)} L'),
             Slider(
               value: totalLiters,
               min: 0.5, // 500 ml
@@ -148,10 +162,19 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
                 });
               },
             ),
-            Text('Você selecionou: ${totalLiters.toStringAsFixed(1)} L'),
+            Divider(
+              thickness: 1,
+              endIndent: 10,
+              indent: 10,
+            ),
 
+            SizedBox(height: 20),
             // Slider para selecionar a quantidade de água por copo
             Text('Selecione a quantidade por copo (ml):'),
+            SizedBox(height: 20),
+            Text(
+              '${doseAmount.toStringAsFixed(0)} ml por copo',
+            ),
             Slider(
               value: doseAmount,
               min: 100, // 100 ml
@@ -164,27 +187,27 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
                 });
               },
             ),
-            Text(
-                'Você selecionou: ${doseAmount.toStringAsFixed(0)} ml por copo'),
+            SizedBox(height: 20),
 
             // Selecione o horário de início e término
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 ElevatedButton(
                   onPressed: () => _selectTime(context, isStart: true),
                   child: Text(startHour != null
                       ? '${startHour!.hour}:${startHour!.minute.toString().padLeft(2, '0')}'
-                      : 'Selecionar Hora Inicial'),
+                      : 'Hora Inicial'),
                 ),
                 ElevatedButton(
                   onPressed: () => _selectTime(context, isStart: false),
                   child: Text(endHour != null
                       ? '${endHour!.hour}:${endHour!.minute.toString().padLeft(2, '0')}'
-                      : 'Selecionar Hora Final'),
+                      : 'Hora Final'),
                 ),
               ],
             ),
+            SizedBox(height: 20),
 
             // Botão para salvar o lembrete
             ElevatedButton(
