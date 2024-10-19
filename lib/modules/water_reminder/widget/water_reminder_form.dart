@@ -1,9 +1,4 @@
-import 'package:app_settings/app_settings.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
-import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
+part of '../view/water_reminder_screen.dart';
 
 class WaterReminderForm extends StatefulWidget {
   @override
@@ -18,6 +13,7 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
   double doseAmount = 200; // Valor inicial
   TimeOfDay? startHour;
   TimeOfDay? endHour;
+  List<double> doseTimes = [];
 
   Future<void> _selectTime(BuildContext context,
       {required bool isStart}) async {
@@ -58,7 +54,6 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
     if (startHour != null && endHour != null) {
       final startHourDouble = startHour!.hour + startHour!.minute / 60;
       final endHourDouble = endHour!.hour + endHour!.minute / 60;
-      List<double> doseTimes = [];
 
       final totalWaterInMl = totalLiters * 1000;
       final totalDoses = (totalWaterInMl / doseAmount).ceil();
@@ -75,6 +70,7 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
       }
 
       final intervalInMinutes = (totalMinutes / totalDoses).ceil();
+      log(intervalInMinutes.toString());
 
       // Calcula os horários das doses
       for (int i = 0; i < totalDoses; i++) {
@@ -88,13 +84,13 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
       }
 
       final reminder = WaterReminderModel(
-        id: 0, // Defina o ID correto, se necessário
-        totalLiters: totalLiters,
-        startHour: startHourDouble,
-        endHour: endHourDouble,
-        doseAmount: doseAmount,
-        doseTimes: doseTimes, // Agora com os horários calculados
-      );
+          id: 0, // Defina o ID correto, se necessário
+          totalLiters: totalLiters,
+          startHour: startHourDouble,
+          endHour: endHourDouble,
+          doseAmount: doseAmount,
+          doseTimes: doseTimes, // Agora com os horários calculados
+          intervalInMinutes: intervalInMinutes);
 
       // Salva e agenda as notificações e alarmes
       await BlocProvider.of<WaterReminderCubit>(context)

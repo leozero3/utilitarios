@@ -57,7 +57,9 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
 
       await repository.saveWaterReminder(reminder);
       _scheduleReminders(reminder);
-      emit(WaterReminderState.loaded(reminder));
+      emit(WaterReminderState.loaded(
+        reminder,
+      ));
 
       log('Salvou ------------------');
     } catch (e) {
@@ -132,12 +134,18 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
 
       // Atualizar o lembrete e emitir o estado atualizado
       final updatedReminder = reminder.copyWith(doseTimes: doseTimes);
+      log('Estado anterior: ${state.toString()}');
 
-      emit(state.copyWith(
-        reminder: updatedReminder,
-        totalDoses: totalDoses,
-        intervalInMinutes: intervalInMinutes,
-      ));
+      // emit(state.copyWith(
+      //   status: WaterReminderStatus.loading,
+      //   reminder: updatedReminder,
+      //   totalDoses: totalDoses,
+      //   intervalInMinutes: intervalInMinutes,
+      // ));
+      log('Novo estado emitido: ${state.copyWith}');
+
+      log('Total Doses: $totalDoses, Interval in Minutes: $intervalInMinutes');
+      log('Valores calculados - Total Doses: $totalDoses, Intervalo em Minutos: $intervalInMinutes');
     } catch (e) {
       log('Erro ao calcular detalhes da dose: $e');
     }

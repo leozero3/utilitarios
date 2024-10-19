@@ -1,8 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:utilitarios/core/constants/app_icons.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
-import 'package:utilitarios/modules/water_reminder/widget/water_reminder_form.dart';
+import 'package:app_settings/app_settings.dart';
+import 'package:go_router/go_router.dart';
+import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
+
+part '../widget/water_reminder_form.dart';
 
 class WaterReminderScreen extends StatefulWidget {
   const WaterReminderScreen({super.key});
@@ -74,10 +80,11 @@ Widget _buildLoadedState(BuildContext context, WaterReminderState state) {
                           ),
                           Image.asset(AppIcons.waterClock),
                           Text('Dose média: ${state.reminder!.doseAmount} ml'),
-                          Text('Total de doses: ${state.totalDoses}'),
+                          Text(
+                              'Total de doses: ${state.reminder!.doseTimes.length}'),
                           Image.asset(AppIcons.waterCup, scale: 2.7),
                           Text(
-                              'Intervalo entre doses: ${state.intervalInMinutes} minutos'),
+                              'Intervalo entre doses: ${state.reminder!.intervalInMinutes} minutos'),
                           const SizedBox(height: 20),
                         ],
                       ),

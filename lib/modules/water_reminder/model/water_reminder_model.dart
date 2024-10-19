@@ -5,6 +5,7 @@ class WaterReminderModel {
   final double endHour; // Hora final (agora em double)
   final double doseAmount; // Quantidade por dose
   final List doseTimes;
+  final int? intervalInMinutes;
 
   WaterReminderModel({
     required this.id,
@@ -13,6 +14,7 @@ class WaterReminderModel {
     required this.endHour,
     required this.doseAmount,
     required this.doseTimes,
+    this.intervalInMinutes,
   });
 
   // Método para copiar o objeto com modificações parciais
@@ -23,6 +25,7 @@ class WaterReminderModel {
     double? endHour,
     double? doseAmount,
     List? doseTimes,
+    int? intervalInMinutes,
   }) {
     return WaterReminderModel(
       id: id ?? this.id,
@@ -31,6 +34,7 @@ class WaterReminderModel {
       endHour: endHour ?? this.endHour,
       doseAmount: doseAmount ?? this.doseAmount,
       doseTimes: doseTimes ?? this.doseTimes,
+      intervalInMinutes: intervalInMinutes ?? this.intervalInMinutes,
     );
   }
 
@@ -43,6 +47,7 @@ class WaterReminderModel {
       'endHour': endHour,
       'doseAmount': doseAmount,
       'doseTimes': doseTimes.join(','),
+      'intervalInMinutes': intervalInMinutes,
     };
   }
 
@@ -57,6 +62,7 @@ class WaterReminderModel {
           .split(',')
           .map((e) => double.parse(e))
           .toList(),
+      intervalInMinutes: map['intervalInMinutes'],
     );
   }
 }

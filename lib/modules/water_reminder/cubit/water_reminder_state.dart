@@ -9,7 +9,7 @@ class WaterReminderState extends Equatable {
   final int? totalDoses;
   final int? intervalInMinutes;
 
-  const WaterReminderState({
+  WaterReminderState({
     required this.status,
     this.reminder,
     this.errorMessage,
@@ -46,7 +46,7 @@ class WaterReminderState extends Equatable {
       status: status ?? this.status,
       reminder: reminder ?? this.reminder,
       errorMessage: errorMessage ?? this.errorMessage,
-      totalDoses: totalDoses ?? this.totalDoses,
+      totalDoses: reminder!.doseTimes.length.toInt(),
       intervalInMinutes: intervalInMinutes ?? this.intervalInMinutes,
     );
   }
