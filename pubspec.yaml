@@ -91,6 +91,8 @@ flutter:
 #water
     - assets/water/water_clock.png
     - assets/water/water_cup.png
+    - assets/water/water_cup_empty.png
+    - assets/water/water_cup_full.png
 #
     - assets/xml/moedas_comb.xml
     - assets/xml/moedas.xml

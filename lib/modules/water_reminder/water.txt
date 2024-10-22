@@ -1,0 +1,2 @@
+- impedir horario de inicio menor que o final
+- definir o horario final o ultimo horario

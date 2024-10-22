@@ -17,4 +17,6 @@ class AppIcons {
   // Imagens relacionadas ao lembrete de água
   static const String waterClock = 'assets/water/water_clock.png';
   static const String waterCup = 'assets/water/water_cup.png';
+  static const String waterCupE = 'assets/water/water_cup_empty.png';
+  static const String waterCupF = 'assets/water/water_cup_full.png';
 }

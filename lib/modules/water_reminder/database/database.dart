@@ -22,7 +22,8 @@ class DatabaseService {
             startHour REAL,
             endHour REAL,
             doseAmount REAL,
-            doseTimes TEXT
+            doseTimes TEXT,
+            intervalInMinutes INTEGER
           )
         ''');
       },

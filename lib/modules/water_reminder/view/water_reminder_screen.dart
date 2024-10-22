@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:utilitarios/core/constants/app_icons.dart';
@@ -62,7 +61,7 @@ Widget _buildLoadedState(BuildContext context, WaterReminderState state) {
               children: [
                 const SizedBox(height: 50),
                 Text(
-                  'Sua meta diária é de ${state.reminder!.totalLiters} litros de água por dia.',
+                  'Sua meta diária é de ${state.reminder!.totalLiters.toStringAsFixed(1)} litros',
                   style: const TextStyle(fontSize: 20),
                 ),
                 const SizedBox(height: 50),
@@ -71,22 +70,83 @@ Widget _buildLoadedState(BuildContext context, WaterReminderState state) {
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 10),
-                          Text(
-                            'Horário: ${state.reminder!.startHour} às ${state.reminder!.endHour}',
-                          ),
-                          Image.asset(AppIcons.waterClock),
-                          Text('Dose média: ${state.reminder!.doseAmount} ml'),
-                          Text(
-                              'Total de doses: ${state.reminder!.doseTimes.length}'),
-                          Image.asset(AppIcons.waterCup, scale: 2.7),
-                          Text(
-                              'Intervalo entre doses: ${state.reminder!.intervalInMinutes} minutos'),
-                          const SizedBox(height: 20),
-                        ],
+                      child: Center(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            Center(
+                              child: Column(
+                                children: [
+                                  Image.asset(AppIcons.waterClock),
+                                  Text(
+                                    '${formatHourAndMinute(state.reminder!.startHour)} às ${formatHourAndMinute(state.reminder!.endHour)}',
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                                'Dose média: ${state.reminder!.doseAmount} ml'),
+                            const SizedBox(height: 20),
+                            Text(
+                                'Intervalo entre doses: ${state.reminder!.intervalInMinutes} minutos'),
+                            const SizedBox(height: 20),
+                            Center(
+                              child: Column(
+                                children: [
+                                  Text(
+                                      'Total de doses: ${state.reminder!.doseTimes.length}'),
+                                  const SizedBox(height: 5),
+                                  Wrap(
+                                    spacing: 8,
+                                    children: List.generate(
+                                      state.reminder!.doseTimes.length,
+                                      (index) {
+                                        double doseTime = index == 0
+                                            ? state.reminder!.startHour
+                                            : state.reminder!.doseTimes[index];
+
+                                        // Obtém o horário atual
+                                        DateTime now = DateTime.now();
+
+                                        // Converte doseTime para o formato de DateTime para fazer a comparação
+                                        DateTime doseDateTime = DateTime(
+                                          now.year,
+                                          now.month,
+                                          now.day,
+                                          doseTime.floor(), // Horas
+                                          (doseTime % 1 * 60)
+                                              .toInt(), // Minutos
+                                        );
+
+                                        // Verifica se o horário atual já passou do horário da dose
+                                        bool isPast = now.isAfter(doseDateTime);
+
+                                        return Column(
+                                          children: [
+                                            Image.asset(
+                                              isPast
+                                                  ? AppIcons.waterCupE
+                                                  : AppIcons
+                                                      .waterCupF, // Muda a imagem se o horário já passou
+                                              scale: 2.7,
+                                            ),
+                                            Text(
+                                              formatHourAndMinute(doseTime),
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -96,21 +156,62 @@ Widget _buildLoadedState(BuildContext context, WaterReminderState state) {
           ),
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SizedBox(
-          width: double.infinity, // Botão ocupa toda a largura
-          child: ElevatedButton(
-            onPressed: () {
-              BlocProvider.of<WaterReminderCubit>(context)
-                  .deleteWaterReminder(state.reminder!.id);
-            },
-            child: const Text('Deletar Lembrete'),
-          ),
-        ),
-      ),
+      deleteButton(context, state),
     ],
   );
+}
+
+Padding deleteButton(BuildContext context, WaterReminderState state) {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {
+          // Mostrar o diálogo de confirmação
+          showDialog(
+            context: context,
+            builder: (_) {
+              return AlertDialog(
+                title: const Text('Confirmar exclusão'),
+                content:
+                    const Text('Tem certeza que deseja deletar este lembrete?'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      // Fechar o diálogo ao clicar em "Cancelar"
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancelar'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // Acessar o WaterReminderCubit e deletar o lembrete
+                      BlocProvider.of<WaterReminderCubit>(context)
+                          .deleteWaterReminder(state.reminder!.id);
+
+                      // Fechar o diálogo
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Deletar',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        child: const Text('Deletar Lembrete'),
+      ),
+    ),
+  );
+}
+
+String formatHourAndMinute(double hour) {
+  int minutes = (hour % 1 * 60).toInt();
+  return '${(hour ~/ 1).toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
 }
 
 Widget _buildErrorState(BuildContext context, WaterReminderState state) {

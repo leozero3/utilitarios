@@ -128,6 +128,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
         doseTimes.add(doseTimeHour + doseTimeMinute / 60); // Hora decimal
         reminder.doseTimes;
         log('-----------Dose time: $doseTimeHour:$doseTimeMinute');
+        log('-----------Dosetimes -----: $doseTimes');
       }
 
       log('Calculated doseTimes: $doseTimes');
