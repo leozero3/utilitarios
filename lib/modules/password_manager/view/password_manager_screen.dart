@@ -85,14 +85,14 @@ class PasswordManagerScreen extends StatelessWidget {
                           password.isNotEmpty) {
                         context.read<PasswordManagerCubit>().addPassword(
                               name,
-                              description,
                               password,
+                              description,
                             );
 
                         // Limpa os campos do formulário após salvar
                         _nameController.clear();
-                        _descriptionController.clear();
                         _passwordController.clear();
+                        _descriptionController.clear();
                       }
                     },
                     child: Text('Salvar Senha'),
