@@ -24,7 +24,19 @@ class ImplPasswordRepository implements PasswordRepository {
 
   @override
   Future<List<Map<String, dynamic>>> getPasswords() async {
-    return await _databaseService.getPasswords();
+    final passwords = await _databaseService.getPasswords();
+    return passwords.map((password) {
+      final decryptedPassword =
+          _encryptionService.decryptPassword(password['password']);
+      return {
+        'id': password['id'],
+        'name': password['name'],
+        'description': password['description'],
+        'password': decryptedPassword,
+      };
+    }).toList();
+
+    // return await _databaseService.getPasswords();
   }
 
   @override

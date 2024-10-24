@@ -37,7 +37,7 @@ class PasswordManagerScreen extends StatelessWidget {
                               Text('Descrição: ${password['description']}'),
                               SizedBox(height: 10),
                               Text(
-                                  'Senha: ${password['password']}'), // senha descriptografada
+                                  'Senha: ${password['password']}'), // Senha descriptografada
                             ],
                           ),
                           actions: [
