@@ -11,7 +11,7 @@ class EncryptionService {
   EncryptionService()
       : key = encrypt.Key.fromUtf8(_key),
         encrypter = encrypt.Encrypter(encrypt.AES(
-          _key as encrypt.Key,
+          encrypt.Key.fromUtf8(_key),
           mode: encrypt.AESMode.cbc, // Modo CBC para garantir a segurança
           padding: 'PKCS7', // Padding PKCS7
         ));

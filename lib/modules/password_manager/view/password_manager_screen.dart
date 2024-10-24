@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:utilitarios/di/service_locator.dart';
 import 'package:utilitarios/modules/password_manager/cubit/password_manager_cubit.dart';
 
 class PasswordManagerScreen extends StatelessWidget {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  PasswordManagerScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,37 +22,96 @@ class PasswordManagerScreen extends StatelessWidget {
               itemCount: state.passwords.length,
               itemBuilder: (context, index) {
                 final password = state.passwords[index];
-                return ListTile(
-                  title: Text(password['name']),
-                  subtitle: Text(password['description']),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text(password['name']),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Descrição: ${password['description']}'),
-                              SizedBox(height: 10),
-                              Text(
-                                  'Senha: ${password['password']}'), // Senha descriptografada
+                return Card(
+                  elevation: 3, // Adiciona uma leve sombra ao card
+                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10), // Bordas arredondadas
+                  ),
+                  child: InkWell(
+                    onLongPress: () {
+                      // Ao segurar o card, abrir o diálogo para confirmação de exclusão
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: Text('Excluir Senha'),
+                            content: Text(
+                                'Você tem certeza que deseja excluir a senha "${password['name']}"?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pop(); // Fechar o diálogo
+                                },
+                                child: Text('Cancelar'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Excluir a senha
+                                  context
+                                      .read<PasswordManagerCubit>()
+                                      .deletePassword(password[
+                                          'id']); // Exemplo: usando o id da senha
+                                  Navigator.of(context)
+                                      .pop(); // Fechar o diálogo após a exclusão
+                                },
+                                child: Text('Excluir',
+                                    style: TextStyle(color: Colors.red)),
+                              ),
                             ],
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Fechar'),
+                          );
+                        },
+                      );
+                    },
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(password['name']),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Descrição: ${password['description']}'),
+                                SizedBox(height: 10),
+                                Text(
+                                    'Senha: ${password['password']}'), // Senha descriptografada
+                              ],
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Fechar'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            password['name'],
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Text('Descrição: ${password['description']}'),
+                          SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ),
                 );
               },
             );
