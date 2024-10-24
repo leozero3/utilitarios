@@ -1,15 +1,18 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:utilitarios/di/service_locator.dart';
 import 'package:utilitarios/modules/currency_converter/bloc/currency_converter_bloc.dart';
 import 'package:utilitarios/modules/currency_converter/services/dio_client.dart.dart';
 import 'package:utilitarios/modules/currency_converter/view/currency_converter.dart';
 import 'package:utilitarios/modules/fuel/view/fuel_screen.dart';
+import 'package:utilitarios/modules/password_manager/cubit/password_manager_cubit.dart';
+import 'package:utilitarios/modules/password_manager/view/password_manager_screen.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
 import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
 import 'package:utilitarios/modules/water_reminder/view/water_reminder_screen.dart';
-import 'package:utilitarios/modules/weather/screen/weather_screen.dart';
+import 'package:utilitarios/modules/weather/view/weather_screen.dart';
 import 'package:utilitarios/modules/calculadora/calculadora_screen.dart';
 import 'package:utilitarios/modules/imc/view/imc_screen.dart';
 import 'package:utilitarios/modules/home/home_screen.dart';
@@ -56,6 +59,15 @@ final List<GoRoute> appRoutes = [
           // GetIt.I<AlarmService>(),
         ),
         child: WaterReminderScreen(),
+      );
+    },
+  ),
+  GoRoute(
+    path: '/gerenciador-senhas',
+    builder: (context, state) {
+      return BlocProvider(
+        create: (context) => getIt<PasswordManagerCubit>()..loadPassword(),
+        child: PasswordManagerScreen(),
       );
     },
   ),

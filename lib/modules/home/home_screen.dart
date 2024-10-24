@@ -12,8 +12,9 @@ class HomeScreen extends StatelessWidget {
       {'title': 'Alcool ou Gasolina', 'route': '/combustivel'},
       {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
 
-      {'title': 'Calculadora', 'route': '/calculadora'},
       {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
+      {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
+      {'title': 'Calculadora', 'route': '/calculadora'},
       {'title': 'Despertador', 'route': '/despertador'},
       {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
       {'title': 'Controle de Despesas', 'route': '/controle-despesas'},
@@ -23,7 +24,6 @@ class HomeScreen extends StatelessWidget {
         'title': 'Cronômetro e Temporizador',
         'route': '/cronometro-temporizador'
       },
-      {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
       {'title': 'Rastreador de Hábitos', 'route': '/rastreador-habitos'},
       {
         'title': 'Calculadora de Empréstimos',
