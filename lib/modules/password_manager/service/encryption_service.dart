@@ -1,17 +1,19 @@
 import 'dart:developer';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EncryptionService {
-  static const String _key = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
+  // static const String _key = 'a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6';
 
   final encrypt.Key key;
   final encrypt.Encrypter encrypter;
 
   // Construtor que inicializa a chave e o encrypter
   EncryptionService()
-      : key = encrypt.Key.fromUtf8(_key),
+      : key =
+            encrypt.Key.fromUtf8(dotenv.env['ENCRYPTION_KEY'] ?? 'default_key'),
         encrypter = encrypt.Encrypter(encrypt.AES(
-          encrypt.Key.fromUtf8(_key),
+          encrypt.Key.fromUtf8(dotenv.env['ENCRYPTION_KEY'] ?? 'default_key'),
           mode: encrypt.AESMode.cbc, // Modo CBC para garantir a segurança
           padding: 'PKCS7', // Padding PKCS7
         ));
