@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:utilitarios/core/constants/app_icons.dart';
 import 'package:utilitarios/modules/password_manager/cubit/password_manager_cubit.dart';
 
 class PasswordManagerScreen extends StatelessWidget {
@@ -22,159 +24,27 @@ class PasswordManagerScreen extends StatelessWidget {
               if (state.status == PasswordManagerStatus.loading) {
                 return Center(child: CircularProgressIndicator());
               } else if (state.status == PasswordManagerStatus.loaded) {
-                return ListView.builder(
-                  itemCount: state.passwords.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == state.passwords.length) {
-                      return SizedBox(height: 70);
-                    }
-
-                    final password = state.passwords[index];
-                    return Card(
-                      elevation: 3,
-                      margin:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          dialog(context, password);
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                password['name'],
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Text('Descrição: ${password['description']}'),
-                              SizedBox(height: 10),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
+                if (state.passwords.isEmpty) {
+                  return empty(context);
+                }
+                return loaded(state);
               } else if (state.status == PasswordManagerStatus.adding) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey, // Atribui o GlobalKey ao Form
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: _nameController,
-                            maxLength: 50,
-                            decoration: InputDecoration(
-                              labelText: 'Nome',
-                              border: OutlineInputBorder(),
-                            ),
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(256),
-                            ],
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'O campo Nome é obrigatório';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          TextFormField(
-                            controller: _descriptionController,
-                            maxLength: 50,
-                            decoration: InputDecoration(
-                              labelText: 'Descrição',
-                              border: OutlineInputBorder(),
-                            ),
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(256),
-                            ],
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'O campo Descrição é obrigatório';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          TextFormField(
-                            controller: _passwordController,
-                            maxLength: 256,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              labelText: 'Senha',
-                              border: OutlineInputBorder(),
-                            ),
-                            inputFormatters: [
-                              LengthLimitingTextInputFormatter(256),
-                            ],
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'O campo Senha é obrigatório';
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                final name = _nameController.text;
-                                final description = _descriptionController.text;
-                                final password = _passwordController.text;
-
-                                if (name.isNotEmpty &&
-                                    description.isNotEmpty &&
-                                    password.isNotEmpty) {
-                                  context
-                                      .read<PasswordManagerCubit>()
-                                      .addPassword(
-                                        name,
-                                        password,
-                                        description,
-                                      );
-
-                                  _nameController.clear();
-                                  _passwordController.clear();
-                                  _descriptionController.clear();
-                                }
-                              }
-                            },
-                            child: Text('Salvar Senha'),
-                          ),
-                          SizedBox(height: 16),
-                          ElevatedButton(
-                              child: Text('Voltar'),
-                              onPressed: () {
-                                context
-                                    .read<PasswordManagerCubit>()
-                                    .loadPassword();
-                              }),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                return adding(context);
               } else if (state.status == PasswordManagerStatus.error) {
                 return Center(child: Text('Erro: ${state.errorMessage}'));
               } else {
-                return Center(child: Text('Nenhuma senha encontrada.'));
+                return Center(
+                  child: Image.asset(
+                    'assets/password_manager/password.svg',
+                    fit: BoxFit.cover,
+                  ),
+                );
               }
             },
           ),
           if (context.watch<PasswordManagerCubit>().state.status ==
-              PasswordManagerStatus.loaded)
+                  PasswordManagerStatus.loaded &&
+              context.watch<PasswordManagerCubit>().state.passwords.isNotEmpty)
             Positioned(
               bottom: 16,
               left: 16,
@@ -191,7 +61,169 @@ class PasswordManagerScreen extends StatelessWidget {
     );
   }
 
-  Future<dynamic> dialog(BuildContext context, Map<String, dynamic> password) {
+  Padding adding(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              SvgPicture.asset(AppIcons.padlock,
+                  width: MediaQuery.of(context).size.width / 2),
+              TextFormField(
+                controller: _nameController,
+                maxLength: 50,
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'O campo Nome é obrigatório';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _descriptionController,
+                maxLength: 50,
+                decoration: InputDecoration(
+                  labelText: 'Descrição',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'O campo Descrição é obrigatório';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                maxLength: 256,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'O campo Senha é obrigatório';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    context.read<PasswordManagerCubit>().addPassword(
+                          _nameController.text,
+                          _passwordController.text,
+                          _descriptionController.text,
+                        );
+                    _nameController.clear();
+                    _passwordController.clear();
+                    _descriptionController.clear();
+                  }
+                },
+                child: Text('Salvar Senha'),
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<PasswordManagerCubit>().loadPassword();
+                },
+                child: Text('Voltar'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  ListView loaded(PasswordManagerState state) {
+    return ListView.builder(
+      itemCount: state.passwords.length + 1,
+      itemBuilder: (context, index) {
+        if (index == state.passwords.length) {
+          return SizedBox(height: 70); // Espaço para o botão
+        }
+
+        final password = state.passwords[index];
+        return Card(
+          elevation: 3,
+          margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: InkWell(
+            onTap: () {
+              dialog(context, password);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    password['name'],
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text('Descrição: ${password['description']}'),
+                  SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  SingleChildScrollView empty(BuildContext context) {
+    return SingleChildScrollView(
+      child: GestureDetector(
+        onTap: () {
+          context.read<PasswordManagerCubit>().showAddPasswordForm();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SvgPicture.asset(AppIcons.padlock,
+                width: MediaQuery.of(context).size.width), // Imagem compacta
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Você ainda não possui senhas cadastradas. Clique em "Adicionar Senha" para adicionar.',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: const Color.fromARGB(255, 128, 126, 126)),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<dynamic> dialog(
+      BuildContext context, Map<String, dynamic> password) async {
+    final decryptedPassword = await context
+        .read<PasswordManagerCubit>()
+        .getDecryptedPassword(password['id']);
     return showDialog(
       context: context,
       builder: (_) {
@@ -199,11 +231,27 @@ class PasswordManagerScreen extends StatelessWidget {
           title: Text(password['name']),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Descrição: ${password['description']}'),
+              Divider(),
+              Text(
+                'Descrição: ${password['description']}',
+                style: TextStyle(fontSize: 17),
+              ),
               SizedBox(height: 10),
-              Text('Senha: ${password['password']}'),
+              Divider(),
+              Text(
+                'Senha:',
+                style: TextStyle(fontSize: 17),
+              ),
+              SizedBox(height: 5),
+              Text(
+                decryptedPassword,
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.blue),
+              ),
             ],
           ),
           actions: [

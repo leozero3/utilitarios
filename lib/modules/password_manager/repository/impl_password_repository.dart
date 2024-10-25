@@ -26,13 +26,13 @@ class ImplPasswordRepository implements PasswordRepository {
   Future<List<Map<String, dynamic>>> getPasswords() async {
     final passwords = await _databaseService.getPasswords();
     return passwords.map((password) {
-      final decryptedPassword =
-          _encryptionService.decryptPassword(password['password']);
+      // final decryptedPassword =
+      //     _encryptionService.decryptPassword(password['password']);
       return {
         'id': password['id'],
         'name': password['name'],
         'description': password['description'],
-        'password': decryptedPassword,
+        // 'password': decryptedPassword,
       };
     }).toList();
 
@@ -45,5 +45,13 @@ class ImplPasswordRepository implements PasswordRepository {
     final encryptedPassword = _encryptionService.encryptPassword(password);
     await _databaseService.updatePassword(
         id, name, description, encryptedPassword);
+  }
+
+  @override
+  Future<String> getPasswordById(int id) async {
+    final password = await _databaseService.getPasswordById(id);
+    final decryptedPassword =
+        _encryptionService.decryptPassword(password['password']);
+    return decryptedPassword;
   }
 }

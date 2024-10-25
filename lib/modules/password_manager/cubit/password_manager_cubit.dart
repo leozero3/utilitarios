@@ -69,4 +69,15 @@ class PasswordManagerCubit extends Cubit<PasswordManagerState> {
   void showAddPasswordForm() {
     emit(state.copyWith(status: PasswordManagerStatus.adding));
   }
+
+  Future<String> getDecryptedPassword(int id) async {
+    try {
+      return await _passwordRepository.getPasswordById(id);
+    } catch (e) {
+      emit(state.copyWith(
+          status: PasswordManagerStatus.error,
+          errorMessage: 'Falha ao descriptografar senha: $e'));
+      return '';
+    }
+  }
 }

@@ -45,6 +45,12 @@ class DatabasePasswordService {
     return await db.query('passwords');
   }
 
+  Future<Map<String, dynamic>> getPasswordById(int id) async {
+    final db = await database;
+    final result = await db.query('passwords', where: 'id =?', whereArgs: [id]);
+    return result.first;
+  }
+
   Future<int> updatePassword(
       int id, String name, String description, String password) async {
     final db = await database;
