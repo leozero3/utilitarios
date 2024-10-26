@@ -1,7 +1,7 @@
-import 'package:utilitarios/modules/password_manager/service/database_service.dart';
-import 'package:utilitarios/modules/password_manager/service/encryption_service.dart';
+import 'package:utilitarios/modules/password_manager/passwords/service/database_service.dart';
+import 'package:utilitarios/modules/password_manager/passwords/service/encryption_service.dart';
 
-import './password_repository.dart';
+import 'password_repository.dart';
 
 class ImplPasswordRepository implements PasswordRepository {
   final DatabasePasswordService _databaseService;

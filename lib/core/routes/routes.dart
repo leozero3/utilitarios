@@ -1,13 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:utilitarios/di/service_locator.dart';
 import 'package:utilitarios/modules/currency_converter/bloc/currency_converter_bloc.dart';
 import 'package:utilitarios/modules/currency_converter/services/dio_client.dart.dart';
 import 'package:utilitarios/modules/currency_converter/view/currency_converter.dart';
 import 'package:utilitarios/modules/fuel/view/fuel_screen.dart';
-import 'package:utilitarios/modules/password_manager/cubit/password_manager_cubit.dart';
-import 'package:utilitarios/modules/password_manager/view/password_manager_screen.dart';
+import 'package:utilitarios/modules/password_manager/auth/cubit/auth_cubit.dart';
+import 'package:utilitarios/modules/password_manager/auth/view/auth_screen.dart';
+import 'package:utilitarios/modules/password_manager/passwords/cubit/password_manager_cubit.dart';
+import 'package:utilitarios/modules/password_manager/passwords/view/password_manager_screen.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
 import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
@@ -29,7 +32,7 @@ final List<GoRoute> appRoutes = [
   ),
   GoRoute(
     path: '/calculadora',
-    builder: (context, state) => const CalculadoraScreen(),
+    builder: (context, state) => CalculadoraScreen(),
   ),
   GoRoute(
     path: '/calculadora-imc',
@@ -60,6 +63,17 @@ final List<GoRoute> appRoutes = [
         ),
         child: WaterReminderScreen(),
       );
+    },
+  ),
+  GoRoute(
+    path: '/auth-senhas',
+    builder: (context, state) {
+      return BlocProvider<AuthCubit>(
+        create: (context) => AuthCubit(LocalAuthentication()),
+        child: AuthScreen(),
+      );
+
+      // return AuthScreen();
     },
   ),
   GoRoute(

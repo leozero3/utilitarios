@@ -37,7 +37,7 @@ dependencies:
   sqflite: ^2.4.0
   shared_preferences: ^2.3.2
   path_provider: ^2.1.4
-  flutter_local_notifications: ^17.2.3
+  flutter_local_notifications: ^17.2.4
   equatable: ^2.0.5
   geolocator: ^13.0.1
   weather: ^3.1.1
@@ -52,6 +52,7 @@ dependencies:
   encrypt: ^5.0.3
   flutter_dotenv: ^5.2.1
   flutter_svg: ^2.0.10
+  local_auth: ^2.3.0
 
 
 

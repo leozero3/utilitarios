@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:utilitarios/core/constants/app_icons.dart';
-import 'package:utilitarios/modules/password_manager/cubit/password_manager_cubit.dart';
+import 'package:utilitarios/modules/password_manager/passwords/cubit/password_manager_cubit.dart';
 
 class PasswordManagerScreen extends StatelessWidget {
   final _nameController = TextEditingController();
@@ -16,7 +17,15 @@ class PasswordManagerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Gerenciador de Senhas')),
+      appBar: AppBar(
+        title: Text('Gerenciador de Senhas'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back), // Ícone de seta
+          onPressed: () {
+            context.go('/'); // Navega diretamente para a HomeScreen
+          },
+        ),
+      ),
       body: Stack(
         children: [
           BlocBuilder<PasswordManagerCubit, PasswordManagerState>(
@@ -239,18 +248,59 @@ class PasswordManagerScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 17),
               ),
               SizedBox(height: 10),
-              Divider(),
-              Text(
-                'Senha:',
-                style: TextStyle(fontSize: 17),
+              InkWell(
+                onTap: () {
+                  Clipboard.setData(
+                      ClipboardData(text: password['description']));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Descrição copiada!')),
+                  );
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.copy,
+                      color: Colors.blue,
+                    ),
+                    Text(
+                      'Copiar Descrição',
+                      style: TextStyle(color: Colors.blue, fontSize: 13),
+                    ),
+                  ],
+                ),
               ),
+              //------------------------------------------------------------------------------------------------
+              SizedBox(height: 10),
+              Divider(),
+              Text('Senha:',
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
               SizedBox(height: 5),
               Text(
                 decryptedPassword,
                 style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.blue),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.blue,
+                ),
+              ),
+
+              InkWell(
+                onTap: () {
+                  Clipboard.setData(ClipboardData(text: decryptedPassword));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Senha copiada!')),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.copy, color: Colors.blue),
+                      Text('Copiar senha',
+                          style: TextStyle(color: Colors.blue, fontSize: 13))
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

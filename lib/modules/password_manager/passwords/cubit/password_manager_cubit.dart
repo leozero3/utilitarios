@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:utilitarios/modules/password_manager/repository/password_repository.dart';
+import 'package:utilitarios/modules/password_manager/passwords/repository/password_repository.dart';
 
 part 'password_manager_state.dart';
 

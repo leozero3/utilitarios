@@ -13,7 +13,8 @@ class HomeScreen extends StatelessWidget {
       {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
 
       {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
-      {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
+      {'title': 'Gerenciador de Senhas', 'route': '/auth-senhas'},
+      // {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
       {'title': 'Calculadora', 'route': '/calculadora'},
       {'title': 'Despertador', 'route': '/despertador'},
       {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
