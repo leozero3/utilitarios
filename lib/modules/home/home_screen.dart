@@ -16,21 +16,17 @@ class HomeScreen extends StatelessWidget {
       {'title': 'Gerenciador de Senhas', 'route': '/auth-senhas'},
       // {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
       {'title': 'Calculadora', 'route': '/calculadora'},
-      {'title': 'Despertador', 'route': '/despertador'},
       {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
       {'title': 'Controle de Despesas', 'route': '/controle-despesas'},
-      {'title': 'Monitor de Atividade Física', 'route': '/monitor-atividade'},
       {'title': 'Conversor de Unidades', 'route': '/conversor-unidades'},
       {
         'title': 'Cronômetro e Temporizador',
         'route': '/cronometro-temporizador'
       },
-      {'title': 'Rastreador de Hábitos', 'route': '/rastreador-habitos'},
       {
         'title': 'Calculadora de Empréstimos',
         'route': '/calculadora-emprestimos'
       },
-      {'title': 'Diário Pessoal', 'route': '/diario-pessoal'},
       // Adicione os outros utilitários aqui
     ];
 

@@ -31,12 +31,14 @@ class AuthScreen extends StatelessWidget {
                 if (authenticated)
                   CircularProgressIndicator()
                 else ...[
-                  ElevatedButton(
-                    onPressed: () {
-                      // Chame authenticate para usar biometria
-                      context.read<AuthCubit>().authenticate();
-                    },
-                    child: Text('Autenticar com Biometria'),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Chame authenticate para usar biometria
+                        context.read<AuthCubit>().authenticate();
+                      },
+                      child: Text('Autenticar com Biometria'),
+                    ),
                   ),
                   // SizedBox(height: 20),
                   // TextField(

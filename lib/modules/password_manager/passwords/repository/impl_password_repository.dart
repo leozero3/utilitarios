@@ -4,10 +4,10 @@ import 'package:utilitarios/modules/password_manager/passwords/service/encryptio
 import 'password_repository.dart';
 
 class ImplPasswordRepository implements PasswordRepository {
-  final DatabasePasswordService _databaseService;
-  final EncryptionService _encryptionService;
+  final DatabasePasswordService _databaseService = DatabasePasswordService();
+  final EncryptionService _encryptionService = EncryptionService();
 
-  ImplPasswordRepository(this._databaseService, this._encryptionService);
+  ImplPasswordRepository();
 
   @override
   Future<void> addPassword(

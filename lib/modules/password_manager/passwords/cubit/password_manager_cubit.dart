@@ -2,14 +2,16 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:utilitarios/modules/password_manager/passwords/repository/impl_password_repository.dart';
 import 'package:utilitarios/modules/password_manager/passwords/repository/password_repository.dart';
 
 part 'password_manager_state.dart';
 
 class PasswordManagerCubit extends Cubit<PasswordManagerState> {
   final PasswordRepository _passwordRepository;
-  PasswordManagerCubit(this._passwordRepository)
-      : super(PasswordManagerState(status: PasswordManagerStatus.initial));
+  PasswordManagerCubit()
+      : _passwordRepository = ImplPasswordRepository(),
+        super(PasswordManagerState(status: PasswordManagerStatus.initial));
 
   Future<void> addPassword(
       String name, String password, String description) async {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,25 +20,21 @@ Future<void> setup() async {
       FlutterLocalNotificationsPlugin());
 
   getIt.registerSingletonAsync<Database>(() async {
+    log('registerAsync<Database>');
     return DatabaseService.initDatabase();
   });
 
-  getIt.registerSingletonWithDependencies<WaterReminderRepository>(
-      () => ImplWaterReminderRepository(getIt.get<Database>()),
-      dependsOn: [Database]);
+  getIt.registerSingletonWithDependencies<WaterReminderRepository>(() {
+    log('registerSingletonWithDependencies<WaterReminderRepository>');
+
+    return ImplWaterReminderRepository(getIt.get<Database>());
+  }, dependsOn: [Database]);
 
   getIt.registerSingleton<NotificationService>(
       NotificationService(getIt.get<FlutterLocalNotificationsPlugin>()));
 
-  getIt.registerSingleton<DatabasePasswordService>(DatabasePasswordService());
-  getIt.registerSingleton<EncryptionService>(EncryptionService());
-  getIt.registerSingleton<PasswordRepository>(ImplPasswordRepository(
-      getIt<DatabasePasswordService>(), getIt<EncryptionService>()));
-  // getIt.registerLazySingleton<PasswordRepository>(
-  //   () => ImplPasswordRepository(
-  //       getIt<DatabasePasswordService>(), getIt<EncryptionService>()),
-  // );
-  getIt.registerFactory<PasswordManagerCubit>(
-    () => PasswordManagerCubit(getIt<PasswordRepository>()),
-  );
+  getIt.registerLazySingleton<PasswordManagerCubit>(() {
+    log('registerLazySingleton<PasswordManagerCubit>');
+    return PasswordManagerCubit();
+  });
 }
