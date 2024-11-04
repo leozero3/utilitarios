@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:utilitarios/modules/password_manager/auth/cubit/auth_cubit.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -14,7 +13,7 @@ class AuthScreen extends StatelessWidget {
         listener: (context, authenticated) {
           if (authenticated) {
             // Navegue para a tela de gerenciamento de senhas
-            context.go('/gerenciador-senhas');
+            Navigator.pushReplacementNamed(context, '/gerenciador-senhas');
           } else {
             // Exiba uma mensagem de erro
             ScaffoldMessenger.of(context).showSnackBar(

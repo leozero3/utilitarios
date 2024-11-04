@@ -1,11 +1,14 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_getit/flutter_getit.dart';
 import 'package:utilitarios/core/constants/app_icons.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:go_router/go_router.dart';
 import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
+import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
+import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
 
 part '../widget/water_reminder_form.dart';
 
@@ -20,7 +23,10 @@ class _WaterReminderScreenState extends State<WaterReminderScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<WaterReminderCubit>(context).loadWaterReminder();
+    log('init');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<WaterReminderCubit>().loadWaterReminder();
+    });
   }
 
   @override

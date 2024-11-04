@@ -1,61 +1,45 @@
 import 'dart:developer';
+import 'package:sqflite_common/sqlite_api.dart';
 
-import 'package:sqflite/sqflite.dart';
-import 'package:utilitarios/modules/water_reminder/model/water_reminder_model.dart';
-
+import '../model/water_reminder_model.dart';
+import '../services/database_water_reminder.dart';
 import './water_reminder_repository.dart';
 
 class ImplWaterReminderRepository implements WaterReminderRepository {
-  final Database _database;
+  final DatabaseService _databaseService = DatabaseService();
+  ImplWaterReminderRepository();
 
-  ImplWaterReminderRepository(this._database);
-
+  // Carrega o primeiro lembrete de água disponível
+  @override
   Future<WaterReminderModel?> loadWaterReminder() async {
-    final List<Map<String, dynamic>> maps =
-        await _database.query('water_reminder');
-
-    // Se o banco de dados contiver dados, retorne o primeiro lembrete
-    if (maps.isNotEmpty) {
-      return WaterReminderModel.fromMap(
-          maps.first); // Certifique-se de retornar um WaterReminder
-    }
-    return null; // Se nenhum dado for encontrado, retorne null
+    log('Repositório: carregando lembrete de água');
+    return await _databaseService.loadWaterReminder();
   }
 
+  // Salva um novo lembrete de água
   @override
   Future<void> saveWaterReminder(WaterReminderModel reminder) async {
-    try {
-      await _database.insert(
-        'water_reminder',
-        reminder.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-    } catch (e) {
-      log('saveWaterReminder $e');
-    }
+    log('Repositório: salvando lembrete de água');
+    await _databaseService.saveWaterReminder(reminder);
   }
 
+  // Busca um lembrete específico pelo ID
   @override
   Future<WaterReminderModel?> getWaterReminder(int id) async {
-    // final List<Map<String, dynamic>> maps = await _database.query(
-    //   'water_reminder',
-    //   where: 'id = ?',
-    //   whereArgs: [id],
-    // );
-
-    // if (maps.isNotEmpty) {
-    //   return WaterReminderModel.fromMap(maps.first);
-    // }
-
-    // return null;
+    log('Repositório: buscando lembrete de água por ID');
+    return await _databaseService.getWaterReminder(id);
   }
 
+  // Deleta um lembrete específico pelo ID
   @override
   Future<void> deleteWaterReminder(int id) async {
-    await _database.delete('water_reminder', where: 'id = ?', whereArgs: [id]);
+    log('Repositório: deletando lembrete de água por ID');
+    await _databaseService.deleteWaterReminder(id);
   }
 
+  // Deleta todos os lembretes de água
   Future<void> deleteAllReminders() async {
-    await _database.delete('water_reminder');
+    log('Repositório: deletando todos os lembretes de água');
+    await _databaseService.deleteAllReminders();
   }
 }

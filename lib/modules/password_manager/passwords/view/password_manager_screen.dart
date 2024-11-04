@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:utilitarios/core/constants/app_icons.dart';
 import 'package:utilitarios/modules/password_manager/passwords/cubit/password_manager_cubit.dart';
 
@@ -20,9 +19,9 @@ class PasswordManagerScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Gerenciador de Senhas'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back), // Ícone de seta
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/'); // Navega diretamente para a HomeScreen
+            Navigator.pop(context); // Navega diretamente para a HomeScreen
           },
         ),
       ),

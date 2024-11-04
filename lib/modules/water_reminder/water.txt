@@ -1,2 +1,4 @@
 - impedir horario de inicio menor que o final
 - definir o horario final o ultimo horario
+- definir o horario para o mesmo dia
+- confererir se vai tocar todos os dias

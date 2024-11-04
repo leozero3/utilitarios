@@ -10,14 +10,13 @@ import 'package:timezone/timezone.dart' as tz;
 part 'water_reminder_state.dart';
 
 class WaterReminderCubit extends Cubit<WaterReminderState> {
-  final WaterReminderRepository repository;
-  final NotificationService notificationService;
+  final WaterReminderRepository _repository;
+  final NotificationService _notificationService;
   // final AlarmService alarmService;
 
   WaterReminderCubit(
-    this.repository,
-    this.notificationService,
-    // this.alarmService,
+    this._repository,
+    this._notificationService,
   ) : super(WaterReminderState.initial());
 
   Future<void> loadWaterReminder() async {
@@ -26,7 +25,8 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       emit(WaterReminderState.loading());
 
       // Carregar o lembrete do repositório
-      final WaterReminderModel? reminder = await repository.loadWaterReminder();
+      final WaterReminderModel? reminder =
+          await _repository.loadWaterReminder();
 
       // Verificar se um lembrete foi encontrado
       if (reminder != null) {
@@ -55,13 +55,13 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       // Cálculo dos horários das doses antes de salvar
       await calculateDoseDetails(reminder);
 
-      await repository.saveWaterReminder(reminder);
+      await _repository.saveWaterReminder(reminder);
       _scheduleReminders(reminder);
       emit(WaterReminderState.loaded(
         reminder,
       ));
 
-      log('Salvou ------------------');
+      log('saveWaterReminder cubit -  -Salvou ------------------');
     } catch (e) {
       emit(WaterReminderState.error('Erro ao salvar o lembrete de agua'));
       log(e.toString());
@@ -81,7 +81,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
   Future<void> deleteWaterReminder(int id) async {
     try {
       emit(WaterReminderState.loading());
-      await repository.deleteWaterReminder(id);
+      await _repository.deleteWaterReminder(id);
       emit(WaterReminderState.initial());
     } catch (e) {
       emit(WaterReminderState.error('Erro ao excluir o lembrete de agua'));
@@ -179,7 +179,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
         final notificationId = scheduledDate.millisecondsSinceEpoch ~/ 1000;
 
         // Agendar notificação
-        notificationService.scheduleNotification(
+        _notificationService.scheduleNotification(
           notificationId, // O ID da notificação (int)
           'Hora de beber água!', // Título da notificação
           'Beba ${reminder.doseAmount.toString()} ml de água', // Conteúdo da notificação
@@ -204,7 +204,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
           hours: doseTime.floor(), minutes: ((doseTime % 1) * 60).toInt()));
 
       // Agendar a notificação com TZDateTime
-      await notificationService.scheduleNotification(
+      await _notificationService.scheduleNotification(
         i, // ID único para cada notificação
         'Hora de beber água!',
         'Beba ${reminder.doseAmount} ml de água',
@@ -219,7 +219,7 @@ class WaterReminderCubit extends Cubit<WaterReminderState> {
       emit(WaterReminderState.loading());
 
       // Excluir todos os lembretes no banco de dados
-      await repository.deleteAllReminders();
+      await _repository.deleteAllReminders();
 
       // Retornar ao estado inicial
       emit(WaterReminderState.initial());

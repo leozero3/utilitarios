@@ -1,6 +1,8 @@
 part of '../view/water_reminder_screen.dart';
 
 class WaterReminderForm extends StatefulWidget {
+  const WaterReminderForm({super.key});
+
   @override
   _WaterReminderFormState createState() => _WaterReminderFormState();
 }
@@ -15,22 +17,24 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
   TimeOfDay? endHour;
   List<double> doseTimes = [];
 
-  Future<void> _selectTime(BuildContext context,
-      {required bool isStart}) async {
+  Future<void> _selectTime(_, {required bool isStart}) async {
     final TimeOfDay? picked = await showTimePicker(
-      context: context,
+      context: _,
       initialTime: isStart
           ? TimeOfDay(hour: 8, minute: 0)
           : TimeOfDay(hour: 20, minute: 0),
     );
-
     if (picked != null) {
+      // Adiciona a verificação de 'mounted'
       setState(() {
         if (isStart) {
           startHour = picked;
         } else {
           endHour = picked;
         }
+        print(isStart);
+        print(endHour);
+        print(picked);
       });
     }
   }
@@ -41,14 +45,14 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
 
   void _saveReminder() async {
     // Verificar se as notificações estão habilitadas
-    bool notificationsEnabled =
-        await BlocProvider.of<WaterReminderCubit>(context)
-            .notificationService
-            .areNotificationsEnable();
+    bool notificationsEnabled = true;
+    // await BlocProvider.of<WaterReminderCubit>(context)
+    // .notificationService
+    // .areNotificationsEnable();
 
     if (!notificationsEnabled) {
       // Se as notificações estiverem desabilitadas, exibir o diálogo
-      _showEnableNotificationDialog();
+      await _showEnableNotificationDialog();
       return; // Não continua até que as notificações estejam habilitadas
     }
     if (startHour != null && endHour != null) {
@@ -65,6 +69,11 @@ class _WaterReminderFormState extends State<WaterReminderForm> {
 
       // Verificar se o total de minutos e doses é válido
       if (totalMinutes <= 0 || totalDoses <= 0) {
+        //snackbar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Intervalo de tempo inválido.')),
+        );
+
         throw UnsupportedError(
             'Intervalo de tempo ou número de doses inválido.');
       }

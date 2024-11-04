@@ -1,7 +1,4 @@
-// lib/features/home/home_screen.dart
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -11,7 +8,6 @@ class HomeScreen extends StatelessWidget {
       {'title': 'Calculadora de IMC', 'route': '/calculadora-imc'},
       {'title': 'Alcool ou Gasolina', 'route': '/combustivel'},
       {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
-
       {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
       {'title': 'Gerenciador de Senhas', 'route': '/auth-senhas'},
       // {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
@@ -27,7 +23,7 @@ class HomeScreen extends StatelessWidget {
         'title': 'Calculadora de Empréstimos',
         'route': '/calculadora-emprestimos'
       },
-      // Adicione os outros utilitários aqui
+      // Adicione outros utilitários aqui
     ];
 
     return Scaffold(
@@ -48,14 +44,17 @@ class HomeScreen extends StatelessWidget {
             elevation: 5,
             child: InkWell(
               onTap: () {
-                context.push(utilities[i]['route']!);
+                // Navega usando o `Navigator.pushNamed`
+                Navigator.pushNamed(context, utilities[i]['route']!);
               },
               child: Center(
                 child: Text(
                   utilities[i]['title']!,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

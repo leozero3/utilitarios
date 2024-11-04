@@ -16,7 +16,7 @@ void main() async {
 
   await setupNotificationService();
 
-  await setup();
+  // await setup();
 
   runApp(MyApp());
 }
