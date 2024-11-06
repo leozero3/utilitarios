@@ -16,6 +16,8 @@ import 'package:utilitarios/modules/password_manager/auth/cubit/auth_cubit.dart'
 import 'package:utilitarios/modules/password_manager/auth/view/auth_screen.dart';
 import 'package:utilitarios/modules/password_manager/passwords/cubit/password_manager_cubit.dart';
 import 'package:utilitarios/modules/password_manager/passwords/view/password_manager_screen.dart';
+import 'package:utilitarios/modules/unit_converter/cubit/unit_converter_cubit.dart';
+import 'package:utilitarios/modules/unit_converter/view/unit_converter_screen.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:utilitarios/modules/water_reminder/repository/impl_water_reminder_repository.dart';
 import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
@@ -79,9 +81,13 @@ class MyApp extends StatelessWidget {
             ),
             // Página Conversor de Unidades
             FlutterGetItPageRouter(
-              name: '/conversor-unidades',
-              // builder: (context) => UnitConverterScreen(),
-            ),
+                name: '/conversor-unidades',
+                builder: (context) {
+                  return BlocProvider(
+                    create: (context) => UnitConverterCubit(),
+                    child: UnitConverterScreen(),
+                  );
+                }),
             // Página Cronômetro e Temporizador
             FlutterGetItPageRouter(
               name: '/cronometro-temporizador',
@@ -136,15 +142,6 @@ class MyApp extends StatelessWidget {
           FlutterGetItPageRouter(
               name: '/lembrete-agua',
               bindings: [
-                // Bind.singletonAsync<Database>(
-                //   (i) async {
-                //     print('Iniciando banco de dados...');
-                //     final db = await DatabaseService.;
-                //     print('Banco de dados inicializado.');
-                //     return db;
-                //   },
-                // ),
-
                 Bind.singleton<WaterReminderRepository>(
                   (i) => ImplWaterReminderRepository(),
                   // dependsOn: [Database],
@@ -156,24 +153,6 @@ class MyApp extends StatelessWidget {
                 Bind.singleton<FlutterLocalNotificationsPlugin>(
                   (i) => FlutterLocalNotificationsPlugin(),
                 ),
-                // Bind.singletonAsync<Database>(
-                //   (i) async {
-                //     print('>>>>>>>>>>>Inicializando banco de dados...');
-                //     final db = await DatabaseService.initDatabase();
-                //     print(
-                //         '>>>>>>>>>>>Banco de dados inicializado com sucesso.');
-                //     print('>>>>>>>>>>>Inicializando $db');
-
-                //     return db;
-                //   },
-                // ),
-                // Bind.singleton<WaterReminderRepository>(
-                //     (i) =>
-                //         ImplWaterReminderRepository(Injector.get<Database>()),
-                //     dependsOn: [Database]),
-                // Bind.lazySingleton<NotificationService>((i) =>
-                //     NotificationService(
-                //         Injector.get<FlutterLocalNotificationsPlugin>()))
               ],
               builder: (context) {
                 return BlocProvider(

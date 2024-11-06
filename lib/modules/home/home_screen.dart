@@ -1,30 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:utilitarios/core/routes/routes.dart';
 
 class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> utilities = [
-      {'title': 'Tempo', 'route': '/tempo'},
-      {'title': 'Calculadora de IMC', 'route': '/calculadora-imc'},
-      {'title': 'Alcool ou Gasolina', 'route': '/combustivel'},
-      {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
-      {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
-      {'title': 'Gerenciador de Senhas', 'route': '/auth-senhas'},
-      // {'title': 'Gerenciador de Senhas', 'route': '/gerenciador-senhas'},
-      {'title': 'Calculadora', 'route': '/calculadora'},
-      {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
-      {'title': 'Controle de Despesas', 'route': '/controle-despesas'},
-      {'title': 'Conversor de Unidades', 'route': '/conversor-unidades'},
-      {
-        'title': 'Cronômetro e Temporizador',
-        'route': '/cronometro-temporizador'
-      },
-      {
-        'title': 'Calculadora de Empréstimos',
-        'route': '/calculadora-emprestimos'
-      },
-      // Adicione outros utilitários aqui
-    ];
+    utilities;
 
     return Scaffold(
       appBar: AppBar(

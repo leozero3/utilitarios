@@ -86,3 +86,20 @@
 //     },
 //   ),
 // ];
+
+final List<Map<String, String>> utilities = [
+  {'title': 'Tempo', 'route': '/tempo'},
+  {'title': 'Calculadora de IMC', 'route': '/calculadora-imc'},
+  {'title': 'Alcool ou Gasolina', 'route': '/combustivel'},
+  {'title': 'Conversor de Moedas', 'route': '/conversor-moedas'},
+  {'title': 'Lembrete de Beber Água', 'route': '/lembrete-agua'},
+  {'title': 'Gerenciador de Senhas', 'route': '/auth-senhas'},
+  {'title': 'Conversor de Unidades', 'route': '/conversor-unidades'},
+  {'title': 'Rastreio de Encomendas', 'route': '/rastreio'},
+  {'title': 'Calculadora', 'route': '/calculadora'},
+  {'title': 'Lista de Tarefas', 'route': '/lista-tarefas'},
+  {'title': 'Controle de Despesas', 'route': '/controle-despesas'},
+  {'title': 'Cronômetro e Temporizador', 'route': '/cronometro-temporizador'},
+  {'title': 'Calculadora de Empréstimos', 'route': '/calculadora-emprestimos'},
+  // Adicione outros utilitários aqui
+];
