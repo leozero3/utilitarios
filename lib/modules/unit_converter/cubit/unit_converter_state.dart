@@ -8,7 +8,7 @@ class UnitConverterState extends Equatable {
   final List<Map<String, double>>? convertedValues;
   final String? errorMessage;
 
-  UnitConverterState(
+  const UnitConverterState(
       {required this.status, this.convertedValues, this.errorMessage});
 
   factory UnitConverterState.initial() {

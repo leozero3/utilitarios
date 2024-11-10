@@ -16,12 +16,17 @@ import 'package:utilitarios/modules/password_manager/auth/cubit/auth_cubit.dart'
 import 'package:utilitarios/modules/password_manager/auth/view/auth_screen.dart';
 import 'package:utilitarios/modules/password_manager/passwords/cubit/password_manager_cubit.dart';
 import 'package:utilitarios/modules/password_manager/passwords/view/password_manager_screen.dart';
+import 'package:utilitarios/modules/todo/cubit/todo_cubit.dart';
+import 'package:utilitarios/modules/todo/database/todo_database.dart';
+import 'package:utilitarios/modules/todo/repository/i_todo_repository.dart';
+import 'package:utilitarios/modules/todo/repository/todo_repository.dart';
+import 'package:utilitarios/modules/todo/view/add_todo_screen.dart';
+import 'package:utilitarios/modules/todo/view/todo_screen.dart';
 import 'package:utilitarios/modules/unit_converter/cubit/unit_converter_cubit.dart';
 import 'package:utilitarios/modules/unit_converter/view/unit_converter_screen.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
 import 'package:utilitarios/modules/water_reminder/repository/impl_water_reminder_repository.dart';
 import 'package:utilitarios/modules/water_reminder/repository/water_reminder_repository.dart';
-import 'package:utilitarios/modules/water_reminder/services/database_water_reminder.dart';
 import 'package:utilitarios/modules/water_reminder/services/notification_service.dart';
 import 'package:utilitarios/modules/water_reminder/view/water_reminder_screen.dart';
 import 'package:utilitarios/modules/weather/view/weather_screen.dart';
@@ -60,11 +65,7 @@ class MyApp extends StatelessWidget {
               name: '/conversor-moedas',
               builder: (context) => CurrencyConverter(),
             ),
-            // Página Lembrete de Beber Água
 
-            // Página Gerenciador de Senhas
-
-            // Página Calculadora
             FlutterGetItPageRouter(
               name: '/calculadora',
               // builder: (context) => CalculatorScreen(),
@@ -81,13 +82,14 @@ class MyApp extends StatelessWidget {
             ),
             // Página Conversor de Unidades
             FlutterGetItPageRouter(
-                name: '/conversor-unidades',
-                builder: (context) {
-                  return BlocProvider(
-                    create: (context) => UnitConverterCubit(),
-                    child: UnitConverterScreen(),
-                  );
-                }),
+              name: '/conversor-unidades',
+              builder: (context) {
+                return BlocProvider(
+                  create: (context) => UnitConverterCubit(),
+                  child: UnitConverterScreen(),
+                );
+              },
+            ),
             // Página Cronômetro e Temporizador
             FlutterGetItPageRouter(
               name: '/cronometro-temporizador',
@@ -164,6 +166,23 @@ class MyApp extends StatelessWidget {
                 );
               }),
         ]),
+        FlutterGetItModuleRouter(
+          name: '/',
+          pages: [
+            FlutterGetItPageRouter(
+              name: '/todo',
+              bindings: [
+                // Bind.singleton((i) => TodoDatabase.instance.initDatabase()),
+              ],
+              builder: (context) {
+                return BlocProvider(
+                  create: (context) => TodoCubit()..loadTodo(),
+                  child: TodoScreen(),
+                );
+              },
+            ),
+          ],
+        )
       ],
       builder: (context, routes, isReady) {
         return MaterialApp(
