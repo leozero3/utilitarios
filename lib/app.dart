@@ -21,7 +21,9 @@ import 'package:utilitarios/modules/todo/database/todo_database.dart';
 import 'package:utilitarios/modules/todo/repository/i_todo_repository.dart';
 import 'package:utilitarios/modules/todo/repository/todo_repository.dart';
 import 'package:utilitarios/modules/todo/view/add_todo_screen.dart';
-import 'package:utilitarios/modules/todo/view/todo_screen.dart';
+import 'package:utilitarios/modules/todo/view/todo_list_screen.dart';
+import 'package:utilitarios/modules/todo/widget/bottom_navigation_bar.dart';
+import 'package:utilitarios/modules/tracking/view/tracking_screen.dart';
 import 'package:utilitarios/modules/unit_converter/cubit/unit_converter_cubit.dart';
 import 'package:utilitarios/modules/unit_converter/view/unit_converter_screen.dart';
 import 'package:utilitarios/modules/water_reminder/cubit/water_reminder_cubit.dart';
@@ -177,8 +179,20 @@ class MyApp extends StatelessWidget {
               builder: (context) {
                 return BlocProvider(
                   create: (context) => TodoCubit()..loadTodo(),
-                  child: TodoScreen(),
+                  child: MainTodoScreen(),
                 );
+              },
+            ),
+          ],
+        ),
+        FlutterGetItModuleRouter(
+          name: '/',
+          pages: [
+            FlutterGetItPageRouter(
+              name: '/rastreio',
+              bindings: [],
+              builder: (context) {
+                return TrackingScreen();
               },
             ),
           ],

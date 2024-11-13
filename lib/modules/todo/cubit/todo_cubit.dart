@@ -10,12 +10,15 @@ part 'todo_state.dart';
 
 class TodoCubit extends Cubit<TodoState> {
   final TodoRepository _repository;
+  bool _isFilteringCompleted = false; // Controle de filtro atual
+
   TodoCubit()
       : _repository = ITodoRepository(),
         super(TodoState.initial());
 
   Future<void> loadTodo({bool onlyComplete = false}) async {
     try {
+      _isFilteringCompleted = onlyComplete;
       emit(TodoState.loading());
       final todo = onlyComplete
           ? await _repository.getAsCompleted()
@@ -31,21 +34,22 @@ class TodoCubit extends Cubit<TodoState> {
   void addTodo(TodoModel todoModel) async {
     try {
       await _repository.save(todoModel);
-      await loadTodo();
+      await loadTodo(
+          onlyComplete:
+              _isFilteringCompleted); // Carrega conforme o filtro atual
     } on Exception catch (e) {
       emit(TodoState.error(message: e.toString()));
-      log('erro ao salvar');
+      log('Erro ao salvar');
     }
   }
 
   void updateStatusTodo(TodoModel todoModel) async {
     try {
       todoModel.completed = !todoModel.completed;
-      print(
-          'Atualizando todo com id: ${todoModel.id} e completed: ${todoModel.completed}');
-
       await _repository.update(todoModel);
-      await loadTodo();
+      await loadTodo(
+          onlyComplete:
+              _isFilteringCompleted); // Carrega conforme o filtro atual
     } catch (e) {
       emit(TodoState.error(message: e.toString()));
       log('Erro ao atualizar');
@@ -55,7 +59,9 @@ class TodoCubit extends Cubit<TodoState> {
   void deleteTodo(int id) async {
     try {
       await _repository.delete(id);
-      await loadTodo();
+      await loadTodo(
+          onlyComplete:
+              _isFilteringCompleted); // Carrega conforme o filtro atual
     } catch (e) {
       emit(TodoState.error(message: e.toString()));
       log('Erro ao deletar');

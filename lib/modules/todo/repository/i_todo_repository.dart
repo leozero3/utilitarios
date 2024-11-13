@@ -15,7 +15,8 @@ class ITodoRepository implements TodoRepository {
   @override
   Future<List<TodoModel>> getAll() async {
     final db = await _database; // Aguarda a inicialização
-    final result = await db.query('todos');
+    final result =
+        await db.query('todos', where: 'completed = ?', whereArgs: [0]);
     return result.map((e) => TodoModel.fromMap(e)).toList();
   }
 

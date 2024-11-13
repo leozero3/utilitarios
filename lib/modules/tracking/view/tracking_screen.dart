@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+    
+class TrackingScreen extends StatelessWidget {
 
-class CalculadoraScreen extends StatelessWidget {
-  const CalculadoraScreen({super.key});
-
+  const TrackingScreen({ Key? key }) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calculadora'),
+        title: const Text(''),
       ),
       body: Container(),
     );
